@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindowClass</class>
+ <widget class="QMainWindow" name="MainWindowClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>396</width>
+    <height>357</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>289</width>
+    <height>241</height>
+   </size>
+  </property>
+  <property name="acceptDrops">
+   <bool>true</bool>
+  </property>
+  <property name="windowTitle">
+   <string>Dukto</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <widget class="QToolBox" name="toolBox">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="page">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>378</width>
+         <height>212</height>
+        </rect>
+       </property>
+       <attribute name="label">
+        <string>Available clients</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QListWidget" name="listPeers"/>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="page_2">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>378</width>
+         <height>212</height>
+        </rect>
+       </property>
+       <attribute name="label">
+        <string>Manual IP connection</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Destination host name or IP address:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="textDestination"/>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>97</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+    <item>
+     <widget class="QProgressBar" name="progressBar">
+      <property name="value">
+       <number>0</number>
+      </property>
+      <property name="textVisible">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>396</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>
