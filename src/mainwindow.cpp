@@ -68,14 +68,23 @@ void MainWindow::startFileTransfer(QStringList files)
     QString dest;
     if (ui->toolBox->currentIndex() == 0)
     {
-        // TODO: validation
-        ListWidgetPeerItem *i = static_cast<ListWidgetPeerItem*>(ui->listPeers->selectedItems().at(0));
-        dest = i->getPeerKey();
+        if (ui->listPeers->selectedItems().count() > 0) {
+            ListWidgetPeerItem *i = static_cast<ListWidgetPeerItem*>(ui->listPeers->selectedItems().at(0));
+            dest = i->getPeerKey();
+        }
+        else {
+            QMessageBox::critical(this, "Error", "No peer available as target.");
+            return;
+        }
+
     }
     else
     {
-        // TODO: validation
         dest = ui->textDestination->text();
+        if (dest.length() == 0) {
+            QMessageBox::critical(this, "Error", "No ip address or hostname specified.");
+            return;
+        }
     }
 
     // TODO: remove "file://" from path
