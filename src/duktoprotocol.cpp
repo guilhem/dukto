@@ -1,6 +1,6 @@
 #include "duktoprotocol.h"
 
-#include <stdlib.h>
+#include "OsLib.h"
 #include <QStringList>
 #include <QFileInfo>
 
@@ -63,7 +63,7 @@ void DuktoProtocol::sayHello(QHostAddress dest)
 void DuktoProtocol::sayGoodbye()
 {
     QByteArray *packet = new QByteArray();
-    packet->append(0x03);           // 0x02 -> GOODBYE MESSAGE
+    packet->append(0x03);               // 0x02 -> GOODBYE MESSAGE
     packet->append("Bye Bye");
     mSocket->writeDatagram(packet->data(), packet->length(), QHostAddress::Broadcast, UDP_PORT);
     delete packet;
@@ -122,7 +122,6 @@ void DuktoProtocol::newIncomingFile()
         mCurrentSocket = s;
         if (!s->waitForReadyRead())
         {
-            // TODO: fare una funzione apposta per chiudere tutto
             mCurrentSocket->close();
             delete mCurrentSocket;
             mCurrentSocket = NULL;
@@ -137,6 +136,8 @@ void DuktoProtocol::newIncomingFile()
             name += c;
         }
 
+        // TODO: se il file di output esiste decidere come procedere
+        // per ora si sovrascrive il vecchio file
         mCurrentFile = new QFile(name);
         mCurrentFile->open(QIODevice::WriteOnly);
         connect(mCurrentSocket, SIGNAL(readyRead()), this, SLOT(readNewData()), Qt::DirectConnection);
@@ -172,11 +173,6 @@ void DuktoProtocol::sendFile(QString ipDest, QString path)
 {
     if (mCurrentFile) return;
 
-#if defined(Q_WS_WIN)
-    path.replace("file:///", "");
-#else
-    path.replace("file://", "");
-#endif
     mCurrentFile = new QFile(path);
     mCurrentFile->open(QIODevice::ReadOnly);
 
@@ -195,18 +191,17 @@ void DuktoProtocol::sendMetaData()
     d.append('\0');
     mCurrentSocket->write(d);
     mSentData = 0;
+    mSentDataBuff = 0;
     updateStatus();
 }
 
 void DuktoProtocol::sendData(qint64 b)
 {
-    // TODO: spostare questa variabile come variabile membro privata della classe
-    static qint64 sb = 0;
-    sb -= b;
+    mSentDataBuff -= b;
     mSentData += b;     // non considera i byte del nome, ma sono trascurabili
     updateStatus();
 
-    if (sb <= 0) {
+    if (mSentDataBuff <= 0) {
 
         QByteArray d = mCurrentFile->read(10000);
 
@@ -222,7 +217,7 @@ void DuktoProtocol::sendData(qint64 b)
         }
 
         mCurrentSocket->write(d);
-        sb = d.size();
+        mSentDataBuff = d.size();
     }
 }
 

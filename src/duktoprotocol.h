@@ -50,6 +50,7 @@ private:
     QFile *mCurrentFile;
     QTcpSocket *mCurrentSocket;
     int mSentData;
+    qint64 mSentDataBuff;
 
 };
 

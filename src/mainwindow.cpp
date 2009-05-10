@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "listwidgetpeeritem.h"
+#include "oslib.h"
 
 #include <QtGui/QMessageBox>
 #include <QUrl>
@@ -55,7 +56,7 @@ void MainWindow::dropEvent(QDropEvent *e)
     {
         urlList = e->mimeData()->urls();
         for (int i = 0; i < urlList.size(); i++)
-            files.append(urlList[i].toString());
+            files.append(OsLib::removeUrlPrefix(urlList[i].toString()));
         startFileTransfer(files);
     }
 
@@ -86,8 +87,6 @@ void MainWindow::startFileTransfer(QStringList files)
             return;
         }
     }
-
-    // TODO: remove "file://" from path
 
     ui->toolBox->setEnabled(false);
     ui->statusBar->showMessage("Sending file...");
