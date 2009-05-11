@@ -127,6 +127,15 @@ void DuktoProtocol::newIncomingFile()
             mCurrentSocket = NULL;
             return;
         }
+
+        // Modalità ricezione
+        mSending = false;
+        // Numero di entità (hardcoded a 1)
+        mCurrentSocket->read(sizeof(qint64));
+        // Dimensione totale
+        mReceivedData = 0;
+        mCurrentSocket->read((char*)&mDataSize, sizeof(qint64));
+        // Nome
         QString name;
         char c;
         while (true)
@@ -135,6 +144,8 @@ void DuktoProtocol::newIncomingFile()
             if (c == '\0') break;
             name += c;
         }
+        // Size primo file (ignorato in quanto uguale alla dimensione totale)
+        mCurrentSocket->read(sizeof(qint64));
 
         // TODO: se il file di output esiste decidere come procedere
         // per ora si sovrascrive il vecchio file
@@ -149,6 +160,8 @@ void DuktoProtocol::newIncomingFile()
 void DuktoProtocol::readNewData()
 {
     QByteArray d = mCurrentSocket->readAll();
+    mReceivedData += d.size();
+    updateStatus();
     if (d.size() > 0) mCurrentFile->write(d);
 }
 
@@ -173,6 +186,9 @@ void DuktoProtocol::sendFile(QString ipDest, QString path)
 {
     if (mCurrentFile) return;
 
+    // Modalità invio
+    mSending = true;
+
     mCurrentFile = new QFile(path);
     mCurrentFile->open(QIODevice::ReadOnly);
 
@@ -187,8 +203,20 @@ void DuktoProtocol::sendMetaData()
     QFileInfo fi(*mCurrentFile);
     QByteArray d;
     QByteArray name = fi.fileName().toAscii();
-    d.append(name);
-    d.append('\0');
+    qint64 size = fi.size();
+
+    // Meta-data
+    //  - N° entità (file, cartelle, ecc...) hardcoded 1
+    //  - Dimensione totale
+    //  - Nome primo (e unico) file
+    //  - Dimensione primo (e unico) file (-1 per una cartella)
+
+    qint64 n = 1;
+    d.append((char*) &n, sizeof(n));
+    d.append((char*) &size, sizeof(size));
+    d.append(name + '\0');
+    d.append((char*) &size, sizeof(size));
+
     mCurrentSocket->write(d);
     mSentData = 0;
     mSentDataBuff = 0;
@@ -223,5 +251,8 @@ void DuktoProtocol::sendData(qint64 b)
 
 void DuktoProtocol::updateStatus()
 {
-    transferStatusUpdate((int)((float)(mSentData) / (float)(mCurrentFile->size()) * 100));
+    if (mSending)
+        transferStatusUpdate((int)((float)(mSentData) / (float)(mCurrentFile->size()) * 100));
+    else
+        transferStatusUpdate((int)((float)(mReceivedData) / (float)(mDataSize) * 100));
 }

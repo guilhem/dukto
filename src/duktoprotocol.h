@@ -51,6 +51,9 @@ private:
     QTcpSocket *mCurrentSocket;
     int mSentData;
     qint64 mSentDataBuff;
+    int mReceivedData;
+    int mDataSize;
+    bool mSending;
 
 };
 
