@@ -7,14 +7,6 @@
 #define UDP_PORT 4644
 #define TCP_PORT 4644
 
-#if defined(Q_WS_WIN)
-#define PLATFORM "Windows"
-#elif defined(Q_WS_MAC)
-#define PLATFORM "Apple Mac"
-#elif defined(Q_WS_X11)
-#define PLATFORM "Linux"
-#endif
-
 DuktoProtocol::DuktoProtocol()
     : mSocket(NULL), mTcpServer(NULL), mCurrentFile(NULL), mCurrentSocket(NULL)
 {
@@ -36,18 +28,6 @@ DuktoProtocol::~DuktoProtocol()
     if (mCurrentFile) delete mCurrentFile;
 }
 
-QString DuktoProtocol::retrieveSystemName()
-{
-    static QString systemName = "";
-    if (systemName != "") return systemName;
-
-    QString uname(getenv("USERNAME"));
-    if (uname == "") uname = getenv("USER");
-    if (uname == "") uname = "Unknown";
-    systemName = uname + " at " + QHostInfo::localHostName() + " (" + PLATFORM + ")";
-    return systemName;
-}
-
 void DuktoProtocol::sayHello(QHostAddress dest)
 {
     QByteArray *packet = new QByteArray();
@@ -55,7 +35,7 @@ void DuktoProtocol::sayHello(QHostAddress dest)
         packet->append(0x01);           // 0x01 -> HELLO MESSAGE (broadcast)
     else
         packet->append(0x02);           // 0x03 -> HELLO MESSAGE (unicast)
-    packet->append(retrieveSystemName());
+    packet->append(OsLib::retrieveSystemName());
     mSocket->writeDatagram(packet->data(), packet->length(), dest, UDP_PORT);
     delete packet;
 }
@@ -90,7 +70,7 @@ void DuktoProtocol::handleMessage(QByteArray &data, QHostAddress &sender)
         case 0x01:  // HELLO (broadcast)
         case 0x02:  // HELLO (unicast)
             data.remove(0, 1);
-            if (data != retrieveSystemName()) {
+            if (data != OsLib::retrieveSystemName()) {
                 mPeers[sender.toString()] = Peer(sender, data);
                 if (msgtype == 0x01) sayHello(sender);
                 peerListChanged();

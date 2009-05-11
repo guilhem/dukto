@@ -7,6 +7,7 @@ class OsLib
 {
 public:
     static QString removeUrlPrefix(QString url);
+    static QString retrieveSystemName();
 
 private:
     OsLib() { }

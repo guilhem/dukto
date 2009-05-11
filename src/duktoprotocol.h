@@ -40,7 +40,6 @@ signals:
      void transferStatusUpdate(int p);
 
 private:
-    QString retrieveSystemName();
     void handleMessage(QByteArray &data, QHostAddress &sender);
     void updateStatus();
 
