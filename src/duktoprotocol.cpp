@@ -1,6 +1,6 @@
 #include "duktoprotocol.h"
 
-#include "OsLib.h"
+#include "oslib.h"
 #include <QStringList>
 #include <QFileInfo>
 
@@ -158,6 +158,8 @@ void DuktoProtocol::closedConnection()
     }
 
     if (mCurrentSocket) mCurrentSocket->close();
+
+    // TODO: verificare che sia stato ricevuto tutto il file
 
     receiveFileComplete(name);
 }

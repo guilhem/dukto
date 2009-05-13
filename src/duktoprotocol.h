@@ -48,10 +48,10 @@ private:
     QHash<QString, Peer> mPeers;
     QFile *mCurrentFile;
     QTcpSocket *mCurrentSocket;
-    int mSentData;
+    qint64 mSentData;
     qint64 mSentDataBuff;
-    int mReceivedData;
-    int mDataSize;
+    qint64 mReceivedData;
+    qint64 mDataSize;
     bool mSending;
 
 };
