@@ -27,6 +27,7 @@ public slots:
     void sendFileComplete();
     void receiveFileStart();
     void receiveFileComplete(QString name);
+    void receiveFileCancelled(QString name);
     void transferStatusUpdate(int p);
 
 private:

@@ -150,18 +150,24 @@ void DuktoProtocol::closedConnection()
     readNewData();
 
     QString name;
+
     if (mCurrentFile) {
         name = mCurrentFile->fileName();
+        qint64 size = mCurrentFile->size();
         mCurrentFile->close();
         delete mCurrentFile;
         mCurrentFile = NULL;
+        if (mDataSize != size)
+        {
+            QFile::remove(name);
+            receiveFileCancelled(name);
+        }
+        else
+            receiveFileComplete(name);
     }
 
     if (mCurrentSocket) mCurrentSocket->close();
 
-    // TODO: verificare che sia stato ricevuto tutto il file
-
-    receiveFileComplete(name);
 }
 
 void DuktoProtocol::sendFile(QString ipDest, QString path)

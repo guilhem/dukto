@@ -10,6 +10,8 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindowClass), mProtocol(NULL)
 {
     ui->setupUi(this);
+    ui->statusBar->showMessage("Drag a file in this window to send it.");
+
 }
 
 MainWindow::~MainWindow()
@@ -24,6 +26,7 @@ void MainWindow::setProtocolReference(DuktoProtocol *p)
     connect(p, SIGNAL(sendFileComplete()), this, SLOT(sendFileComplete()));
     connect(p, SIGNAL(receiveFileStart()), this, SLOT(receiveFileStart()));
     connect(p, SIGNAL(receiveFileComplete(QString)), this, SLOT(receiveFileComplete(QString)));
+    connect(p, SIGNAL(receiveFileCancelled(QString)), this, SLOT(receiveFileCancelled(QString)));
     connect(p, SIGNAL(transferStatusUpdate(int)), this, SLOT(transferStatusUpdate(int)), Qt::DirectConnection);
 }
 
@@ -111,6 +114,12 @@ void MainWindow::receiveFileComplete(QString name)
 {
     ui->toolBox->setEnabled(true);
     ui->statusBar->showMessage("File '" + name +  "' received.");
+}
+
+void MainWindow::receiveFileCancelled(QString name)
+{
+    ui->toolBox->setEnabled(true);
+    ui->statusBar->showMessage("Transfer of file '" + name +  "' cancelled.");
 }
 
 void MainWindow::transferStatusUpdate(int p)
