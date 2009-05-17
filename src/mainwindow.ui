@@ -12,8 +12,8 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>289</width>
-    <height>241</height>
+    <width>300</width>
+    <height>260</height>
    </size>
   </property>
   <property name="acceptDrops">
@@ -35,7 +35,7 @@
          <x>0</x>
          <y>0</y>
          <width>378</width>
-         <height>212</height>
+         <height>184</height>
         </rect>
        </property>
        <attribute name="label">
@@ -53,7 +53,7 @@
          <x>0</x>
          <y>0</y>
          <width>378</width>
-         <height>212</height>
+         <height>184</height>
         </rect>
        </property>
        <attribute name="label">
@@ -89,6 +89,74 @@
            <size>
             <width>20</width>
             <height>97</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="page_3">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>378</width>
+         <height>184</height>
+        </rect>
+       </property>
+       <attribute name="label">
+        <string>About Dukto</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <widget class="QLabel" name="label_2">
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Dukto R1 - May 2009</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_5">
+          <property name="font">
+           <font>
+            <italic>true</italic>
+           </font>
+          </property>
+          <property name="text">
+           <string>A simple, fast and multi-platform file transfer tool for LAN users.</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string>Official site: http://dukto.googlecode.com/</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>This software is released under the GPL2 license.</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
            </size>
           </property>
          </spacer>

@@ -84,13 +84,18 @@ void MainWindow::startFileTransfer(QStringList files)
         }
 
     }
-    else
+    else if (ui->toolBox->currentIndex() == 1)
     {
         dest = ui->textDestination->text();
         if (dest.length() == 0) {
             QMessageBox::critical(this, "Error", "No ip address or hostname specified.");
             return;
         }
+    }
+    else
+    {
+        QMessageBox::critical(this, "Error", "Before dropping a file here, switch to the 'available clients' or to the 'manual IP connection' modes.");
+        return;
     }
 
     ui->toolBox->setEnabled(false);
