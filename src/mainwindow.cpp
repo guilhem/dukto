@@ -4,6 +4,7 @@
 #include "oslib.h"
 
 #include <QtGui/QMessageBox>
+#include <QtGui/QFileDialog>
 #include <QUrl>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -24,6 +25,7 @@ void MainWindow::setProtocolReference(DuktoProtocol *p)
     mProtocol = p;
     connect(p, SIGNAL(peerListChanged()), this, SLOT(refreshPeerList()));
     connect(p, SIGNAL(sendFileComplete()), this, SLOT(sendFileComplete()));
+    connect(p, SIGNAL(sendFileError(int)), this, SLOT(sendFileError(int)));
     connect(p, SIGNAL(receiveFileStart()), this, SLOT(receiveFileStart()));
     connect(p, SIGNAL(receiveFileComplete(QString)), this, SLOT(receiveFileComplete(QString)));
     connect(p, SIGNAL(receiveFileCancelled(QString)), this, SLOT(receiveFileCancelled(QString)));
@@ -125,4 +127,33 @@ void MainWindow::receiveFileCancelled(QString name)
 void MainWindow::transferStatusUpdate(int p)
 {
     ui->progressBar->setValue(p);
+}
+
+void MainWindow::on_buttonSendToIp_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this, "Select file to send", "", "Any file (*.*)");
+    if (filename == "") return;
+    QStringList list;
+    list.append(filename);
+    startFileTransfer(list);
+}
+
+void MainWindow::on_textDestination_textChanged(QString s)
+{
+    ui->buttonSendToIp->setEnabled((s != ""));
+}
+
+void MainWindow::sendFileError(int e)
+{
+    QMessageBox::critical(this, "Send file", "An error has occurred while sending the file (" + QString::number(e, 10) + ").");
+    ui->toolBox->setEnabled(true);
+}
+
+void MainWindow::on_listPeers_itemDoubleClicked(QListWidgetItem* item)
+{
+    QString filename = QFileDialog::getOpenFileName(this, "Select file to send", "", "Any file (*.*)");
+    if (filename == "") return;
+    QStringList list;
+    list.append(filename);
+    startFileTransfer(list);
 }

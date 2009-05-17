@@ -31,10 +31,12 @@ public slots:
     void closedConnection();
     void sendMetaData();
     void sendData(qint64 b);
+    void sendConnectError(QAbstractSocket::SocketError);
 
 signals:
      void peerListChanged();
      void sendFileComplete();
+     void sendFileError(int code);
      void receiveFileStart();
      void receiveFileComplete(QString name);
      void receiveFileCancelled(QString name);

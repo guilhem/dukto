@@ -182,6 +182,7 @@ void DuktoProtocol::sendFile(QString ipDest, QString path)
 
     mCurrentSocket = new QTcpSocket(this);
     connect(mCurrentSocket, SIGNAL(connected()), this, SLOT(sendMetaData()), Qt::DirectConnection);
+    connect(mCurrentSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(sendConnectError(QAbstractSocket::SocketError)), Qt::DirectConnection);
     connect(mCurrentSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(sendData(qint64)), Qt::DirectConnection);
     mCurrentSocket->connectToHost(ipDest, TCP_PORT);
 }
@@ -243,4 +244,23 @@ void DuktoProtocol::updateStatus()
         transferStatusUpdate((int)((float)(mSentData) / (float)(mCurrentFile->size()) * 100));
     else
         transferStatusUpdate((int)((float)(mReceivedData) / (float)(mDataSize) * 100));
+}
+
+void DuktoProtocol::sendConnectError(QAbstractSocket::SocketError e)
+{
+    if (mCurrentSocket)
+    {
+        mCurrentSocket->close();
+        delete mCurrentSocket;
+        mCurrentSocket = NULL;
+    }
+    if (mCurrentFile)
+    {
+        mCurrentFile->close();
+        delete mCurrentFile;
+        mCurrentFile = NULL;
+    }
+    sendFileComplete();
+
+    sendFileError(e);
 }

@@ -71,6 +71,16 @@
          <widget class="QLineEdit" name="textDestination"/>
         </item>
         <item>
+         <widget class="QPushButton" name="buttonSendToIp">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Send a file</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <spacer name="verticalSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>

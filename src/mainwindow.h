@@ -4,6 +4,7 @@
 #include <QtGui/QMainWindow>
 #include <QtGui/QDragEnterEvent>
 #include <QtGui/QDropEvent>
+#include <QtGui/QListWidgetItem>
 #include "duktoprotocol.h"
 
 namespace Ui
@@ -25,6 +26,7 @@ public:
 public slots:
     void refreshPeerList();
     void sendFileComplete();
+    void sendFileError(int e);
     void receiveFileStart();
     void receiveFileComplete(QString name);
     void receiveFileCancelled(QString name);
@@ -36,6 +38,11 @@ private:
     Ui::MainWindowClass *ui;
     DuktoProtocol *mProtocol;
 
+
+private slots:
+    void on_listPeers_itemDoubleClicked(QListWidgetItem* item);
+    void on_textDestination_textChanged(QString );
+    void on_buttonSendToIp_clicked();
 };
 
 #endif // MAINWINDOW_H
