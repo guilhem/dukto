@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>396</width>
-    <height>357</height>
+    <width>400</width>
+    <height>300</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>300</width>
-    <height>260</height>
+    <width>400</width>
+    <height>300</height>
    </size>
   </property>
   <property name="acceptDrops">
@@ -34,8 +34,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>378</width>
-         <height>184</height>
+         <width>382</width>
+         <height>127</height>
         </rect>
        </property>
        <attribute name="label">
@@ -52,7 +52,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>378</width>
+         <width>382</width>
          <height>184</height>
         </rect>
        </property>
@@ -100,7 +100,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>378</width>
+         <width>382</width>
          <height>184</height>
         </rect>
        </property>
@@ -182,7 +182,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>396</width>
+     <width>400</width>
      <height>22</height>
     </rect>
    </property>
