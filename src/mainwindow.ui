@@ -118,7 +118,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Dukto R1 - May 2009</string>
+           <string>Dukto R2 - June 2009</string>
           </property>
          </widget>
         </item>
@@ -181,7 +181,7 @@
     <item>
      <widget class="QLabel" name="labelOutput">
       <property name="text">
-       <string>Destination folder: -</string>
+       <string>Destination folder:</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
