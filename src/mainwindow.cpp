@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     ui->statusBar->showMessage("Drag a file in this window to send it.");
+    ui->labelOutput->setText("Destination folder: " + OsLib::adaptPath(QDir::currentPath()));
 
 }
 

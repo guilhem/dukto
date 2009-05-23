@@ -9,6 +9,14 @@ public:
     static QString removeUrlPrefix(QString url);
     static QString retrieveSystemName();
 
+    static inline QString adaptPath(QString path) {
+        #if defined(Q_WS_WIN)
+        path.replace('/', "\\");
+        #endif
+        return path;
+    }
+
+
 private:
     OsLib() { }
 

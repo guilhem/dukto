@@ -35,7 +35,7 @@
          <x>0</x>
          <y>0</y>
          <width>382</width>
-         <height>127</height>
+         <height>107</height>
         </rect>
        </property>
        <attribute name="label">
@@ -53,7 +53,7 @@
          <x>0</x>
          <y>0</y>
          <width>382</width>
-         <height>184</height>
+         <height>107</height>
         </rect>
        </property>
        <attribute name="label">
@@ -101,7 +101,7 @@
          <x>0</x>
          <y>0</y>
          <width>382</width>
-         <height>184</height>
+         <height>107</height>
         </rect>
        </property>
        <attribute name="label">
@@ -139,6 +139,9 @@
           <property name="text">
            <string>Official site: http://dukto.googlecode.com/</string>
           </property>
+          <property name="openExternalLinks">
+           <bool>false</bool>
+          </property>
          </widget>
         </item>
         <item>
@@ -172,6 +175,16 @@
       </property>
       <property name="textVisible">
        <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="labelOutput">
+      <property name="text">
+       <string>Destination folder: -</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
       </property>
      </widget>
     </item>
