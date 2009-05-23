@@ -121,6 +121,7 @@ void MainWindow::receiveFileComplete(QString name)
 {
     ui->toolBox->setEnabled(true);
     ui->statusBar->showMessage("File '" + name +  "' received.");
+    QApplication::alert(this, 3000);
 }
 
 void MainWindow::receiveFileCancelled(QString name)
