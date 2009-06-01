@@ -52,8 +52,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>550</width>
-         <height>170</height>
+         <width>196</width>
+         <height>93</height>
         </rect>
        </property>
        <attribute name="label">
@@ -100,8 +100,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>550</width>
-         <height>170</height>
+         <width>98</width>
+         <height>91</height>
         </rect>
        </property>
        <attribute name="label">
@@ -109,7 +109,7 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_5">
         <item>
-         <widget class="QListWidget" name="listWidget"/>
+         <widget class="QListWidget" name="listLog"/>
         </item>
        </layout>
       </widget>

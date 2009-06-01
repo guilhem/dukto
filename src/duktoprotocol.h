@@ -35,7 +35,7 @@ public slots:
 
 signals:
      void peerListChanged();
-     void sendFileComplete();
+     void sendFileComplete(QString name);
      void sendFileError(int code);
      void receiveFileStart();
      void receiveFileComplete(QString name);

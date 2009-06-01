@@ -1,4 +1,4 @@
-#include <QtGui/QApplication>
+#include "3rd/qtsingleapplication/qtsingleapplication.h"
 #include "mainwindow.h"
 #include "duktoprotocol.h"
 
@@ -11,7 +11,12 @@ int main(int argc, char *argv[])
         if (c.exists(argv[1])) QDir::setCurrent(argv[1]);
     }
     
-    QApplication a(argc, argv);
+    QtSingleApplication a(argc, argv);
+    if (a.isRunning()) {
+        a.sendMessage("FOREGROUND");
+        return 0;
+    }
+
     MainWindow w;
     DuktoProtocol p;
     w.setProtocolReference(&p);
@@ -19,6 +24,7 @@ int main(int argc, char *argv[])
     p.sayHello(QHostAddress::Broadcast);
 
     w.show();
+    a.setActivationWindow(&w, true);
     int ret = a.exec();
     p.sayGoodbye();
     return ret;

@@ -1,11 +1,14 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "listwidgetpeeritem.h"
+#include "listwidgetlogitem.h"
 #include "oslib.h"
 
 #include <QtGui/QMessageBox>
 #include <QtGui/QFileDialog>
 #include <QUrl>
+#include <QTime>
+#include <QDir>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindowClass), mProtocol(NULL)
@@ -25,7 +28,7 @@ void MainWindow::setProtocolReference(DuktoProtocol *p)
 {
     mProtocol = p;
     connect(p, SIGNAL(peerListChanged()), this, SLOT(refreshPeerList()));
-    connect(p, SIGNAL(sendFileComplete()), this, SLOT(sendFileComplete()));
+    connect(p, SIGNAL(sendFileComplete(QString)), this, SLOT(sendFileComplete(QString)));
     connect(p, SIGNAL(sendFileError(int)), this, SLOT(sendFileError(int)));
     connect(p, SIGNAL(receiveFileStart()), this, SLOT(receiveFileStart()));
     connect(p, SIGNAL(receiveFileComplete(QString)), this, SLOT(receiveFileComplete(QString)));
@@ -105,9 +108,10 @@ void MainWindow::startFileTransfer(QStringList files)
     mProtocol->sendFile(dest, files.at(0));
 }
 
-void MainWindow::sendFileComplete()
+void MainWindow::sendFileComplete(QString name)
 {
-    ui->statusBar->showMessage("File sent.");
+    ui->statusBar->showMessage("File '" + name + "' sent.");
+    log("File '" + name + "' sent.", name);
     ui->toolBox->setEnabled(true);
 }
 
@@ -122,6 +126,7 @@ void MainWindow::receiveFileComplete(QString name)
 {
     ui->toolBox->setEnabled(true);
     ui->statusBar->showMessage("File '" + name +  "' received.");
+    log("File '" + name +  "' received.", name);
     QApplication::alert(this, 3000);
 }
 
@@ -130,6 +135,7 @@ void MainWindow::receiveFileCancelled(QString name)
     ui->toolBox->setEnabled(true);
     ui->progressBar->setValue(0);
     ui->statusBar->showMessage("Transfer of file '" + name +  "' cancelled.");
+    log("Transfer of file '" + name +  "' cancelled.", "");
 }
 
 void MainWindow::transferStatusUpdate(int p)
@@ -165,4 +171,16 @@ void MainWindow::on_listPeers_itemDoubleClicked(QListWidgetItem* item)
     QStringList list;
     list.append(filename);
     startFileTransfer(list);
+}
+
+void MainWindow::log(QString text, QString filename)
+{
+    new ListWidgetLogItem(ui->listLog, QTime::currentTime().toString("HH.mm") + ": " + text, filename);
+}
+
+void MainWindow::on_listLog_itemDoubleClicked(QListWidgetItem* item)
+{
+    ListWidgetLogItem *i = static_cast<ListWidgetLogItem*>(ui->listLog->selectedItems().at(0));
+    QString n = QDir::currentPath() + "/" + i->getFilename();
+    OsLib::openFile(n);
 }

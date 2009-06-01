@@ -1,0 +1,2 @@
+SOURCES += ../../trunk/src/3rd/qtsingleapplication/qtsingleapplication.cpp ../../trunk/src/3rd/qtsingleapplication/qtlocalpeer.cpp
+HEADERS += ../../trunk/src/3rd/qtsingleapplication/qtsingleapplication.h ../../trunk/src/3rd/qtsingleapplication/qtlocalpeer.h

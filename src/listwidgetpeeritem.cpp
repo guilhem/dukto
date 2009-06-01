@@ -1,8 +1,8 @@
-#include "listwidgetpeeritem.h"
+#include "listwidgetlogitem.h"
 
-ListWidgetPeerItem::ListWidgetPeerItem(QListWidget * parent, QString text, QString peerKey)
+ListWidgetLogItem::ListWidgetLogItem(QListWidget * parent, QString text, QString filename)
         : QListWidgetItem(parent, QListWidgetItem::UserType)
 {
     setText(text);
-    mPeerKey = peerKey;
+    mFilename = filename;
 }

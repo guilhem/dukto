@@ -127,8 +127,16 @@ void DuktoProtocol::newIncomingFile()
         // Size primo file (ignorato in quanto uguale alla dimensione totale)
         mCurrentSocket->read(sizeof(qint64));
 
-        // TODO: se il file di output esiste decidere come procedere
-        // per ora si sovrascrive il vecchio file
+        // Se il file esiste già cambio il nome di quello nuovo
+        int i = 2;
+        QString oname = name;
+        while (QFile::exists(name)) {
+            QFileInfo fi(oname);
+            name = fi.baseName() + " (" + QString::number(i) + ")." + fi.completeSuffix();
+            i++;
+        }
+
+        // Creazione file e inizializzazione gestori eventi
         mCurrentFile = new QFile(name);
         mCurrentFile->open(QIODevice::WriteOnly);
         connect(mCurrentSocket, SIGNAL(readyRead()), this, SLOT(readNewData()), Qt::DirectConnection);
@@ -223,13 +231,16 @@ void DuktoProtocol::sendData(qint64 b)
         QByteArray d = mCurrentFile->read(10000);
 
         if (d.size() == 0) {
+            QString filename = mCurrentFile->fileName();
+            mCurrentSocket->disconnectFromHost();
+            mCurrentSocket->waitForDisconnected(1000);
             mCurrentSocket->close();
             mCurrentFile->close();
             delete mCurrentSocket;
             delete mCurrentFile;
             mCurrentSocket = NULL;
             mCurrentFile = NULL;
-            sendFileComplete();
+            sendFileComplete(filename);
             return;
         }
 
@@ -260,7 +271,5 @@ void DuktoProtocol::sendConnectError(QAbstractSocket::SocketError e)
         delete mCurrentFile;
         mCurrentFile = NULL;
     }
-    sendFileComplete();
-
     sendFileError(e);
 }

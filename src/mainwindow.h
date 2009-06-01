@@ -25,7 +25,7 @@ public:
 
 public slots:
     void refreshPeerList();
-    void sendFileComplete();
+    void sendFileComplete(QString name);
     void sendFileError(int e);
     void receiveFileStart();
     void receiveFileComplete(QString name);
@@ -34,12 +34,14 @@ public slots:
 
 private:
     void startFileTransfer(QStringList files);
+    void log(QString text, QString filename);
 
     Ui::MainWindowClass *ui;
     DuktoProtocol *mProtocol;
 
 
 private slots:
+    void on_listLog_itemDoubleClicked(QListWidgetItem* item);
     void on_listPeers_itemDoubleClicked(QListWidgetItem* item);
     void on_textDestination_textChanged(QString );
     void on_buttonSendToIp_clicked();

@@ -3,6 +3,10 @@
 
 #include <QString>
 
+#if defined(Q_WS_WIN)
+#include <windows.h>
+#endif
+
 class OsLib
 {
 public:
@@ -16,6 +20,11 @@ public:
         return path;
     }
 
+    static inline void openFile(QString path) {
+        #if defined(Q_WS_WIN)
+        ::ShellExecute(NULL, NULL, path.toStdWString().c_str(), NULL, NULL, SW_SHOWNORMAL);
+        #endif
+    }
 
 private:
     OsLib() { }
