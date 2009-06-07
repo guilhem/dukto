@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     ui->statusBar->showMessage("Drag a file in this window to send it.");
-    ui->labelOutput->setText("Destination folder: " + OsLib::adaptPath(QDir::currentPath()));
+    ui->labelOutput->setText(OsLib::adaptPath(QDir::currentPath()));
 
 }
 
@@ -36,17 +36,35 @@ void MainWindow::setProtocolReference(DuktoProtocol *p)
     connect(p, SIGNAL(transferStatusUpdate(int)), this, SLOT(transferStatusUpdate(int)), Qt::DirectConnection);
 }
 
+// Aggiornamento lista dei client
 void MainWindow::refreshPeerList()
 {
     QHash<QString, Peer>& peers = mProtocol->getPeers();
     QStringList list;
     QHashIterator<QString, Peer> i(peers);
+
+    // Salvataggio elemento corrente
+    QString current;
+    if (ui->listPeers->selectedItems().count() > 0)
+    {
+        ListWidgetPeerItem *i = static_cast<ListWidgetPeerItem*>(ui->listPeers->selectedItems().at(0));
+        current = i->getPeerKey();
+    }
+
+    // Cancellazione lista corrente
     ui->listPeers->clear();
-    while (i.hasNext()) {
+
+    // Riempimento lista
+    while (i.hasNext())
+    {
         i.next();
         new ListWidgetPeerItem(ui->listPeers, i.value().name, i.key());
+        if (i.key() == current)
+            ui->listPeers->setCurrentRow(ui->listPeers->count() - 1);
     }
-    if (ui->listPeers->count() > 0)
+
+    // Selezione primo elemento
+    if ((ui->listPeers->count() > 0) && (ui->listPeers->selectedItems().count() == 0))
         ui->listPeers->setCurrentRow(0);
 }
 
@@ -76,7 +94,7 @@ void MainWindow::startFileTransfer(QStringList files)
 {
 
     QString dest;
-    if (ui->toolBox->currentIndex() == 0)
+    if (ui->tabWidget->currentIndex() == 0)
     {
         if (ui->listPeers->selectedItems().count() > 0) {
             ListWidgetPeerItem *i = static_cast<ListWidgetPeerItem*>(ui->listPeers->selectedItems().at(0));
@@ -88,7 +106,7 @@ void MainWindow::startFileTransfer(QStringList files)
         }
 
     }
-    else if (ui->toolBox->currentIndex() == 1)
+    else if (ui->tabWidget->currentIndex() == 1)
     {
         dest = ui->textDestination->text();
         if (dest.length() == 0) {
@@ -102,29 +120,29 @@ void MainWindow::startFileTransfer(QStringList files)
         return;
     }
 
-    ui->toolBox->setEnabled(false);
+    ui->tabWidget->setEnabled(false);
     ui->statusBar->showMessage("Sending file...");
     ui->progressBar->setValue(0);
-    mProtocol->sendFile(dest, files.at(0));
+    mProtocol->sendFile(dest, files);
 }
 
 void MainWindow::sendFileComplete(QString name)
 {
     ui->statusBar->showMessage("File '" + name + "' sent.");
     log("File '" + name + "' sent.", name);
-    ui->toolBox->setEnabled(true);
+    ui->tabWidget->setEnabled(true);
 }
 
 void MainWindow::receiveFileStart()
 {
     ui->progressBar->setValue(0);
-    ui->toolBox->setEnabled(false);
+    ui->tabWidget->setEnabled(false);
     ui->statusBar->showMessage("Receiving file...");
 }
 
 void MainWindow::receiveFileComplete(QString name)
 {
-    ui->toolBox->setEnabled(true);
+    ui->tabWidget->setEnabled(true);
     ui->statusBar->showMessage("File '" + name +  "' received.");
     log("File '" + name +  "' received.", name);
     QApplication::alert(this, 3000);
@@ -132,7 +150,7 @@ void MainWindow::receiveFileComplete(QString name)
 
 void MainWindow::receiveFileCancelled(QString name)
 {
-    ui->toolBox->setEnabled(true);
+    ui->tabWidget->setEnabled(true);
     ui->progressBar->setValue(0);
     ui->statusBar->showMessage("Transfer of file '" + name +  "' cancelled.");
     log("Transfer of file '" + name +  "' cancelled.", "");
@@ -161,7 +179,7 @@ void MainWindow::sendFileError(int e)
 {
     QMessageBox::critical(this, "Send file", "An error has occurred while sending the file (" + QString::number(e, 10) + ").");
     ui->progressBar->setValue(0);
-    ui->toolBox->setEnabled(true);
+    ui->tabWidget->setEnabled(true);
 }
 
 void MainWindow::on_listPeers_itemDoubleClicked(QListWidgetItem* item)

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>568</width>
-    <height>391</height>
+    <width>400</width>
+    <height>300</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -25,41 +25,32 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
-     <widget class="QToolBox" name="toolBox">
+     <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
        <number>0</number>
       </property>
-      <widget class="QWidget" name="page">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>550</width>
-         <height>170</height>
-        </rect>
-       </property>
-       <attribute name="label">
-        <string>Available clients</string>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Buddies</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout">
+       <layout class="QVBoxLayout" name="verticalLayout_5">
         <item>
-         <widget class="QListWidget" name="listPeers"/>
+         <widget class="QListWidget" name="listPeers">
+          <property name="iconSize">
+           <size>
+            <width>16</width>
+            <height>16</height>
+           </size>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="page_2">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>196</width>
-         <height>93</height>
-        </rect>
-       </property>
-       <attribute name="label">
-        <string>Manual IP connection</string>
+      <widget class="QWidget" name="tab_2">
+       <attribute name="title">
+        <string>IP Connection</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
          <widget class="QLabel" name="label">
           <property name="text">
@@ -95,37 +86,21 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="page_4">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>98</width>
-         <height>91</height>
-        </rect>
-       </property>
-       <attribute name="label">
+      <widget class="QWidget" name="tab_3">
+       <attribute name="title">
         <string>Log</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_5">
+       <layout class="QVBoxLayout" name="verticalLayout_7">
         <item>
          <widget class="QListWidget" name="listLog"/>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="page_3">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>325</width>
-         <height>101</height>
-        </rect>
-       </property>
-       <attribute name="label">
-        <string>About Dukto</string>
+      <widget class="QWidget" name="tab_4">
+       <attribute name="title">
+        <string>About</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <layout class="QVBoxLayout" name="verticalLayout_6">
         <item>
          <widget class="QLabel" name="label_2">
           <property name="font">
@@ -177,13 +152,55 @@
           <property name="sizeHint" stdset="0">
            <size>
             <width>20</width>
-            <height>40</height>
+            <height>151</height>
            </size>
           </property>
          </spacer>
         </item>
        </layout>
       </widget>
+     </widget>
+    </item>
+    <item>
+     <widget class="QFrame" name="frame">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QGridLayout" name="gridLayout" rowstretch="0" columnstretch="2,10,30">
+       <property name="margin">
+        <number>0</number>
+       </property>
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="pixmap">
+          <pixmap resource="resources.qrc">:/folderIcon</pixmap>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Destination folder: </string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QLabel" name="labelOutput">
+         <property name="text">
+          <string>-</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </item>
     <item>
@@ -196,16 +213,6 @@
       </property>
      </widget>
     </item>
-    <item>
-     <widget class="QLabel" name="labelOutput">
-      <property name="text">
-       <string>Destination folder:</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-      </property>
-     </widget>
-    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -213,7 +220,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>568</width>
+     <width>400</width>
      <height>22</height>
     </rect>
    </property>
@@ -221,6 +228,8 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

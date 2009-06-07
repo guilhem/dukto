@@ -22,11 +22,11 @@ public:
     void sayHello(QHostAddress dest);
     void sayGoodbye();
     inline QHash<QString, Peer>& getPeers() { return mPeers; }
-    void sendFile(QString ipDest, QString path);
+    void sendFile(QString ipDest, QStringList files);
     
 public slots:
     void newUdpData();
-    void newIncomingFile();
+    void newIncomingConnection();
     void readNewData();
     void closedConnection();
     void sendMetaData();
@@ -43,19 +43,38 @@ signals:
      void transferStatusUpdate(int p);
 
 private:
+    QStringList* expandTree(QStringList files);
+    void addRecursive(QStringList *e, QString path);
+    qint64 computeTotalSize(QStringList *e);
+    qint64 computeTotalSizeRecursive(QString path);
+    QByteArray nextElementHeader();
+
     void handleMessage(QByteArray &data, QHostAddress &sender);
     void updateStatus();
 
-    QUdpSocket *mSocket;
-    QTcpServer *mTcpServer;
-    QHash<QString, Peer> mPeers;
-    QFile *mCurrentFile;
-    QTcpSocket *mCurrentSocket;
-    qint64 mSentData;
-    qint64 mSentDataBuff;
-    qint64 mReceivedData;
-    qint64 mDataSize;
-    bool mSending;
+    QUdpSocket *mSocket;            // Socket UDP segnalazione
+    QTcpServer *mTcpServer;         // Socket TCP attesa dati
+    QTcpSocket *mCurrentSocket;     // Socket TCP dell'attuale trasferimento file
+
+    QHash<QString, Peer> mPeers;    // Elenco peer individuati
+
+    // Send and receive members
+    bool mIsSending;
+    bool mIsReceiving;
+    QFile *mCurrentFile;            // Puntatore al file aperto corrente
+    qint64 mTotalSize;              // Quantità totale di dati da inviare o ricevere
+    int mFileCounter;              // Puntatore all'elemento correntemente da trasmettere o ricevere
+
+    // Sending members
+    QStringList *mFilesToSend;      // Elenco degli elementi da trasmettere
+    qint64 mSentData;               // Quantità di dati totale trasmessi
+    qint64 mSentBuffer;             // Quantità di dati rimanenti nel buffer di trasmissione
+
+    // Receive members
+    qint64 mElementsToReceiveCount;    // Numero di elementi da ricevere
+    qint64 mTotalReceivedData;         // Quantità di dati ricevuti totale
+    qint64 mElementReceivedData;       // Quantità di dati ricevuti per l'elemento corrente
+    qint64 mElementSize;               // Dimensione dell'elemento corrente
 
 };
 
