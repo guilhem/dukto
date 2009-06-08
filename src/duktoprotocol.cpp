@@ -75,11 +75,11 @@ void DuktoProtocol::handleMessage(QByteArray &data, QHostAddress &sender)
         case 0x01:  // HELLO (broadcast)
         case 0x02:  // HELLO (unicast)
             data.remove(0, 1);
-            //if (data != OsLib::retrieveSystemName()) {
+            if (data != OsLib::retrieveSystemName()) {
                 mPeers[sender.toString()] = Peer(sender, data);
                 if (msgtype == 0x01) sayHello(sender);
                 peerListChanged();
-            //}
+            }
             break;
 
         case 0x03:  // GOODBYE
