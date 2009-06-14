@@ -390,7 +390,7 @@ QStringList* DuktoProtocol::expandTree(QStringList files)
 
     // Iterazione sugli elementi
     for (int i = 0; i < files.count(); i++)
-        addRecursive(expanded, files.at(0));
+        addRecursive(expanded, files.at(i));
 
     return expanded;
 }
