@@ -318,7 +318,8 @@ void DuktoProtocol::sendData(qint64 b)
 
     // Se il file corrente non è ancora terminato
     // invio una nuova parte del file
-    d = mCurrentFile->read(10000);
+    if (mCurrentFile)
+        d = mCurrentFile->read(10000);
     if (d.size() > 0)
     {
         mCurrentSocket->write(d);
@@ -346,7 +347,8 @@ void DuktoProtocol::sendData(qint64 b)
 
     // Invio l'header insime al primo chunk di file
     mTotalSize += d.size();
-    d.append(mCurrentFile->read(10000));
+    if (mCurrentFile)
+        d.append(mCurrentFile->read(10000));
     mCurrentSocket->write(d);
     mSentBuffer += d.size();
     return;
@@ -401,10 +403,15 @@ void DuktoProtocol::addRecursive(QStringList *e, QString path)
     e->append(path);
 
     QFileInfo fi(path);
-    if (fi.isDir()) {
+    if (fi.isDir())
+    {
         QStringList entries = QDir(path).entryList();
         for (int i = 0; i < entries.count(); i++)
-            addRecursive(e, entries.at(i));
+        {
+            QString entry = entries.at(i);
+            if ((entry != ".") && (entry != ".."))
+                addRecursive(e, path + "\\" + entry);
+        }
     }
 }
 
@@ -458,11 +465,16 @@ qint64 DuktoProtocol::computeTotalSize(QStringList *e)
 qint64 DuktoProtocol::computeTotalSizeRecursive(QString path)
 {
     QFileInfo fi(path);
-    if (fi.isDir()) {
+    if (fi.isDir())
+    {
         qint64 size = 0;
         QStringList entries = QDir(path).entryList();
         for (int i = 0; i < entries.count(); i++)
-            size += computeTotalSizeRecursive(entries.at(i));
+        {
+            QString entry = entries.at(i);
+            if ((entry != ".") && (entry != ".."))
+                size += computeTotalSizeRecursive(entry);
+        }
         return size;
     }
     else
