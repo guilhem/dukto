@@ -340,6 +340,12 @@ void DuktoProtocol::sendData(qint64 b)
         mCurrentSocket->close();
         mCurrentSocket->deleteLater();
         mCurrentSocket = NULL;
+        if (mCurrentFile)
+        {
+            mCurrentFile->close();
+            delete mCurrentFile;
+            mCurrentFile = NULL;
+        }
         mIsSending = false;
         sendFileComplete("*****");
         return;
@@ -387,10 +393,11 @@ void DuktoProtocol::sendConnectError(QAbstractSocket::SocketError e)
 // contenere tutti i file e le cartelle contenuti
 QStringList* DuktoProtocol::expandTree(QStringList files)
 {
-    // Lista espansa
-    QStringList* expanded = new QStringList();
+    // Percorso base
+    mBasePath = QFileInfo(files.at(0)).absolutePath();
 
     // Iterazione sugli elementi
+    QStringList* expanded = new QStringList();
     for (int i = 0; i < files.count(); i++)
         addRecursive(expanded, files.at(i));
 
@@ -400,6 +407,7 @@ QStringList* DuktoProtocol::expandTree(QStringList files)
 // Aggiunge ricorsivamente tutte le cartelle e file contenuti in una cartella
 void DuktoProtocol::addRecursive(QStringList *e, QString path)
 {
+
     e->append(path);
 
     QFileInfo fi(path);
@@ -410,7 +418,7 @@ void DuktoProtocol::addRecursive(QStringList *e, QString path)
         {
             QString entry = entries.at(i);
             if ((entry != ".") && (entry != ".."))
-                addRecursive(e, path + "\\" + entry);
+                addRecursive(e, path + "//" + entry);
         }
     }
 }
@@ -435,7 +443,7 @@ QByteArray DuktoProtocol::nextElementHeader()
     // Nome elemento
     QString name = fullname;
     QFileInfo fi(fullname);
-    name.replace(fi.absolutePath() + "/", "");
+    name.replace(mBasePath + "/", "");
     header.append(name.toAscii() + '\0');
 
     // Dimensione elemento
@@ -473,7 +481,7 @@ qint64 DuktoProtocol::computeTotalSizeRecursive(QString path)
         {
             QString entry = entries.at(i);
             if ((entry != ".") && (entry != ".."))
-                size += computeTotalSizeRecursive(entry);
+                size += computeTotalSizeRecursive(path + "//" + entry);
         }
         return size;
     }

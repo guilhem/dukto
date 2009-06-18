@@ -69,6 +69,7 @@ private:
     QStringList *mFilesToSend;      // Elenco degli elementi da trasmettere
     qint64 mSentData;               // Quantità di dati totale trasmessi
     qint64 mSentBuffer;             // Quantità di dati rimanenti nel buffer di trasmissione
+    QString mBasePath;              // Percorso base per l'invio di file e cartelle
 
     // Receive members
     qint64 mElementsToReceiveCount;    // Numero di elementi da ricevere
