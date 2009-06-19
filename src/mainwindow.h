@@ -41,6 +41,7 @@ private:
 
 
 private slots:
+    void on_buttonChangeDir_clicked();
     void on_listLog_itemDoubleClicked(QListWidgetItem* item);
     void on_listPeers_itemDoubleClicked(QListWidgetItem* item);
     void on_textDestination_textChanged(QString );

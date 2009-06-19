@@ -46,7 +46,6 @@ private:
     QStringList* expandTree(QStringList files);
     void addRecursive(QStringList *e, QString path);
     qint64 computeTotalSize(QStringList *e);
-    qint64 computeTotalSizeRecursive(QString path);
     QByteArray nextElementHeader();
 
     void handleMessage(QByteArray &data, QHostAddress &sender);

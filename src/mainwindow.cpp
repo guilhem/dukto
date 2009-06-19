@@ -202,3 +202,12 @@ void MainWindow::on_listLog_itemDoubleClicked(QListWidgetItem* item)
     QString n = QDir::currentPath() + "/" + i->getFilename();
     OsLib::openFile(n);
 }
+
+void MainWindow::on_buttonChangeDir_clicked()
+{
+    QString dirname = QFileDialog::getExistingDirectory(this, "Change the output folder", ".",
+                        QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    if (dirname == "") return;
+    QDir::setCurrent(dirname);
+    ui->labelOutput->setText(OsLib::adaptPath(QDir::currentPath()));
+}

@@ -418,7 +418,7 @@ void DuktoProtocol::addRecursive(QStringList *e, QString path)
         {
             QString entry = entries.at(i);
             if ((entry != ".") && (entry != ".."))
-                addRecursive(e, path + "//" + entry);
+                addRecursive(e, path + "/" + entry);
         }
     }
 }
@@ -467,24 +467,10 @@ qint64 DuktoProtocol::computeTotalSize(QStringList *e)
 {
     qint64 size = 0;
     for (int i = 0; i < e->count(); i++)
-        size += computeTotalSizeRecursive(e->at(i));
+    {
+        QFileInfo fi(e->at(i));
+        if (!fi.isDir()) size += fi.size();
+    }
     return size;
 }
-qint64 DuktoProtocol::computeTotalSizeRecursive(QString path)
-{
-    QFileInfo fi(path);
-    if (fi.isDir())
-    {
-        qint64 size = 0;
-        QStringList entries = QDir(path).entryList();
-        for (int i = 0; i < entries.count(); i++)
-        {
-            QString entry = entries.at(i);
-            if ((entry != ".") && (entry != ".."))
-                size += computeTotalSizeRecursive(path + "//" + entry);
-        }
-        return size;
-    }
-    else
-        return fi.size();
-}
+

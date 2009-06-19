@@ -164,16 +164,16 @@
     <item>
      <widget class="QFrame" name="frame">
       <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
+       <enum>QFrame::NoFrame</enum>
       </property>
       <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
+       <enum>QFrame::Plain</enum>
       </property>
-      <layout class="QGridLayout" name="gridLayout" rowstretch="0" columnstretch="2,10,30">
+      <property name="lineWidth">
+       <number>0</number>
+      </property>
+      <layout class="QGridLayout" name="gridLayout" columnstretch="2,10,1000,2">
        <property name="margin">
-        <number>0</number>
-       </property>
-       <property name="spacing">
         <number>0</number>
        </property>
        <item row="0" column="0">
@@ -182,7 +182,7 @@
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap resource="resources.qrc">:/folderIcon</pixmap>
+          <pixmap>:/folderIcon</pixmap>
          </property>
         </widget>
        </item>
@@ -197,6 +197,13 @@
         <widget class="QLabel" name="labelOutput">
          <property name="text">
           <string>-</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QToolButton" name="buttonChangeDir">
+         <property name="text">
+          <string>...</string>
          </property>
         </widget>
        </item>
@@ -228,8 +235,6 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources>
-  <include location="resources.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
