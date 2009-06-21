@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>542</width>
+    <width>400</width>
     <height>300</height>
    </rect>
   </property>
@@ -67,7 +67,7 @@
            <bool>false</bool>
           </property>
           <property name="text">
-           <string>Send a file</string>
+           <string>Send files</string>
           </property>
          </widget>
         </item>
@@ -182,7 +182,7 @@
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap>:/folderIcon</pixmap>
+          <pixmap resource="resources.qrc">:/folderIcon</pixmap>
          </property>
         </widget>
        </item>
@@ -227,7 +227,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>542</width>
+     <width>400</width>
      <height>22</height>
     </rect>
    </property>
@@ -235,6 +235,8 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

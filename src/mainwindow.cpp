@@ -163,11 +163,9 @@ void MainWindow::transferStatusUpdate(int p)
 
 void MainWindow::on_buttonSendToIp_clicked()
 {
-    QString filename = QFileDialog::getOpenFileName(this, "Select file to send", "", "Any file (*.*)");
-    if (filename == "") return;
-    QStringList list;
-    list.append(filename);
-    startFileTransfer(list);
+    QStringList files = QFileDialog::getOpenFileNames(this, "Select file to send", "", "Any file (*.*)");
+    if (files.count() == 0) return;
+    startFileTransfer(files);
 }
 
 void MainWindow::on_textDestination_textChanged(QString s)
