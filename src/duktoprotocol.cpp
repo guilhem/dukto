@@ -394,7 +394,10 @@ void DuktoProtocol::sendConnectError(QAbstractSocket::SocketError e)
 QStringList* DuktoProtocol::expandTree(QStringList files)
 {
     // Percorso base
-    mBasePath = QFileInfo(files.at(0)).absolutePath();
+    QString bp = files.at(0);
+    if (bp.right(1) == "/") bp.chop(1);
+    mBasePath = QFileInfo(bp).absolutePath();
+    if (mBasePath.right(1) == "/") mBasePath.chop(1);
 
     // Iterazione sugli elementi
     QStringList* expanded = new QStringList();
@@ -408,6 +411,8 @@ QStringList* DuktoProtocol::expandTree(QStringList files)
 void DuktoProtocol::addRecursive(QStringList *e, QString path)
 {
 
+    path.replace("//", "/");
+    if (path.right(1) == "/") path.chop(1);
     e->append(path);
 
     QFileInfo fi(path);
