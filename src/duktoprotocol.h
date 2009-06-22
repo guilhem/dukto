@@ -35,11 +35,11 @@ public slots:
 
 signals:
      void peerListChanged();
-     void sendFileComplete(QString name);
+     void sendFileComplete(QStringList *files);
      void sendFileError(int code);
      void receiveFileStart();
-     void receiveFileComplete(QString name);
-     void receiveFileCancelled(QString name);
+     void receiveFileComplete(QStringList *files);
+     void receiveFileCancelled();
      void transferStatusUpdate(int p);
 
 private:
@@ -75,6 +75,7 @@ private:
     qint64 mTotalReceivedData;         // Quantità di dati ricevuti totale
     qint64 mElementReceivedData;       // Quantità di dati ricevuti per l'elemento corrente
     qint64 mElementSize;               // Dimensione dell'elemento corrente
+    QStringList *mReceivedFiles;        // Elenco degli elementi da trasmettere
 
 };
 

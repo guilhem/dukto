@@ -131,6 +131,7 @@ void DuktoProtocol::newIncomingConnection()
     mIsReceiving = true;
     mTotalReceivedData = 0;
     mElementSize = -1;
+    mReceivedFiles = new QStringList();
 
     // -- Lettura header generale --
     // Numero entità da ricevere
@@ -157,6 +158,7 @@ void DuktoProtocol::readNewData()
             QString name;
             char c;
             while (1) { mCurrentSocket->getChar(&c); if (c == '\0') break; name += c; }
+            mReceivedFiles->append(name);
 
             // Lettura dimensioni
             mCurrentSocket->read((char*) &mElementSize, sizeof(qint64));
@@ -226,10 +228,10 @@ void DuktoProtocol::closedConnection()
         delete mCurrentFile;
         mCurrentFile = NULL;
         QFile::remove(name);
-        receiveFileCancelled(name);
+        receiveFileCancelled();
     }
     else
-        receiveFileComplete("****");
+        receiveFileComplete(mReceivedFiles);
 
     // Chiusura socket
     if (mCurrentSocket)
@@ -239,9 +241,12 @@ void DuktoProtocol::closedConnection()
         mCurrentSocket->waitForDisconnected(1000);
         mCurrentSocket->close();
         mCurrentSocket->deleteLater();
-       // delete mCurrentSocket;
         mCurrentSocket = NULL;
     }
+
+    // Rilascio memoria
+    delete mReceivedFiles;
+    mReceivedFiles = NULL;
 
     // Impostazione stato
     mIsReceiving = false;
@@ -347,7 +352,9 @@ void DuktoProtocol::sendData(qint64 b)
             mCurrentFile = NULL;
         }
         mIsSending = false;
-        sendFileComplete("*****");
+        sendFileComplete(mFilesToSend);
+        delete mFilesToSend;
+        mFilesToSend = NULL;
         return;
     }
 

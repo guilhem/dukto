@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindowClass), mProtocol(NULL)
 {
     ui->setupUi(this);
-    ui->statusBar->showMessage("Drag a file in this window to send it.");
+    ui->statusBar->showMessage("Drag some files and folders in this window to send them.");
     ui->labelOutput->setText(OsLib::adaptPath(QDir::currentPath()));
 
 }
@@ -28,11 +28,11 @@ void MainWindow::setProtocolReference(DuktoProtocol *p)
 {
     mProtocol = p;
     connect(p, SIGNAL(peerListChanged()), this, SLOT(refreshPeerList()));
-    connect(p, SIGNAL(sendFileComplete(QString)), this, SLOT(sendFileComplete(QString)));
+    connect(p, SIGNAL(sendFileComplete(QStringList*)), this, SLOT(sendFileComplete(QStringList*)));
     connect(p, SIGNAL(sendFileError(int)), this, SLOT(sendFileError(int)));
     connect(p, SIGNAL(receiveFileStart()), this, SLOT(receiveFileStart()));
-    connect(p, SIGNAL(receiveFileComplete(QString)), this, SLOT(receiveFileComplete(QString)));
-    connect(p, SIGNAL(receiveFileCancelled(QString)), this, SLOT(receiveFileCancelled(QString)));
+    connect(p, SIGNAL(receiveFileComplete(QStringList*)), this, SLOT(receiveFileComplete(QStringList*)));
+    connect(p, SIGNAL(receiveFileCancelled()), this, SLOT(receiveFileCancelled()));
     connect(p, SIGNAL(transferStatusUpdate(int)), this, SLOT(transferStatusUpdate(int)), Qt::DirectConnection);
 }
 
@@ -121,15 +121,24 @@ void MainWindow::startFileTransfer(QStringList files)
     }
 
     ui->tabWidget->setEnabled(false);
-    ui->statusBar->showMessage("Sending file...");
+    ui->statusBar->showMessage("Sending files...");
     ui->progressBar->setValue(0);
     mProtocol->sendFile(dest, files);
 }
 
-void MainWindow::sendFileComplete(QString name)
+void MainWindow::sendFileComplete(QStringList *files)
 {
-    ui->statusBar->showMessage("File '" + name + "' sent.");
-    log("File '" + name + "' sent.", name);
+    if (files->count() == 1)
+    {
+        QFileInfo fi(files->at(0));
+        ui->statusBar->showMessage("File '" + fi.fileName() + "' sent.");
+        log("File '" + fi.fileName() + "' sent.", files->at(0));
+    }
+    else
+    {
+        ui->statusBar->showMessage("Multiple files and folders sent.");
+        log("Multiple files and folders sent.", "");
+    }
     ui->tabWidget->setEnabled(true);
 }
 
@@ -137,23 +146,33 @@ void MainWindow::receiveFileStart()
 {
     ui->progressBar->setValue(0);
     ui->tabWidget->setEnabled(false);
-    ui->statusBar->showMessage("Receiving file...");
+    ui->statusBar->showMessage("Receiving files...");
 }
 
-void MainWindow::receiveFileComplete(QString name)
+void MainWindow::receiveFileComplete(QStringList *files)
 {
     ui->tabWidget->setEnabled(true);
-    ui->statusBar->showMessage("File '" + name +  "' received.");
-    log("File '" + name +  "' received.", name);
     QApplication::alert(this, 3000);
+    if (files->count() == 1)
+    {
+        ui->statusBar->showMessage("File '" + files->at(0) +  "' received.");
+        QString path = QDir::currentPath() + "/" + files->at(0);
+        path.replace("//", "/");
+        log("File '" + files->at(0) +  "' received.", path);
+    }
+    else
+    {
+        ui->statusBar->showMessage("Multiple files and folders received.");
+        log("Multiple files and folders received.", "");
+    }
 }
 
-void MainWindow::receiveFileCancelled(QString name)
+void MainWindow::receiveFileCancelled()
 {
     ui->tabWidget->setEnabled(true);
     ui->progressBar->setValue(0);
-    ui->statusBar->showMessage("Transfer of file '" + name +  "' cancelled.");
-    log("Transfer of file '" + name +  "' cancelled.", "");
+    ui->statusBar->showMessage("Transfer cancelled.");
+    log("Transfer cancelled.", "");
 }
 
 void MainWindow::transferStatusUpdate(int p)
@@ -182,11 +201,9 @@ void MainWindow::sendFileError(int e)
 
 void MainWindow::on_listPeers_itemDoubleClicked(QListWidgetItem* item)
 {
-    QString filename = QFileDialog::getOpenFileName(this, "Select file to send", "", "Any file (*.*)");
-    if (filename == "") return;
-    QStringList list;
-    list.append(filename);
-    startFileTransfer(list);
+    QStringList files = QFileDialog::getOpenFileNames(this, "Select file to send", "", "Any file (*.*)");
+    if (files.count() == 0) return;
+    startFileTransfer(files);
 }
 
 void MainWindow::log(QString text, QString filename)
@@ -197,13 +214,16 @@ void MainWindow::log(QString text, QString filename)
 void MainWindow::on_listLog_itemDoubleClicked(QListWidgetItem* item)
 {
     ListWidgetLogItem *i = static_cast<ListWidgetLogItem*>(ui->listLog->selectedItems().at(0));
-    QString n = QDir::currentPath() + "/" + i->getFilename();
-    OsLib::openFile(n);
+    if (i->getFilename() != "")
+    {
+        //QString n = QDir::currentPath() + "/" + i->getFilename();
+        OsLib::openFile(i->getFilename());
+    }
 }
 
 void MainWindow::on_buttonChangeDir_clicked()
 {
-    QString dirname = QFileDialog::getExistingDirectory(this, "Change the output folder", ".",
+    QString dirname = QFileDialog::getExistingDirectory(this, "Select the folder where received files will be saved:", ".",
                         QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
     if (dirname == "") return;
     QDir::setCurrent(dirname);

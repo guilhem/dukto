@@ -25,11 +25,11 @@ public:
 
 public slots:
     void refreshPeerList();
-    void sendFileComplete(QString name);
+    void sendFileComplete(QStringList *files);
     void sendFileError(int e);
     void receiveFileStart();
-    void receiveFileComplete(QString name);
-    void receiveFileCancelled(QString name);
+    void receiveFileComplete(QStringList *files);
+    void receiveFileCancelled();
     void transferStatusUpdate(int p);
 
 private:
