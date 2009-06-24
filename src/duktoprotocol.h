@@ -41,6 +41,7 @@ public:
     void sayGoodbye();
     inline QHash<QString, Peer>& getPeers() { return mPeers; }
     void sendFile(QString ipDest, QStringList files);
+    inline bool isBusy() { return mIsSending || mIsReceiving; }
     
 public slots:
     void newUdpData();

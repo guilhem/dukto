@@ -88,7 +88,7 @@ void MainWindow::refreshPeerList()
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *e)
 {
-    if (e->mimeData()->hasFormat("text/uri-list"))
+    if (e->mimeData()->hasFormat("text/uri-list") && (!mProtocol->isBusy()))
         e->acceptProposedAction();
 }
 
