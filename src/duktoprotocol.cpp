@@ -57,7 +57,7 @@ void DuktoProtocol::sayHello(QHostAddress dest)
     if (dest == QHostAddress::Broadcast)
         packet->append(0x01);           // 0x01 -> HELLO MESSAGE (broadcast)
     else
-        packet->append(0x02);           // 0x03 -> HELLO MESSAGE (unicast)
+        packet->append(0x02);           // 0x02 -> HELLO MESSAGE (unicast)
     packet->append(OsLib::retrieveSystemName());
     mSocket->writeDatagram(packet->data(), packet->length(), dest, UDP_PORT);
     delete packet;
@@ -66,7 +66,7 @@ void DuktoProtocol::sayHello(QHostAddress dest)
 void DuktoProtocol::sayGoodbye()
 {
     QByteArray *packet = new QByteArray();
-    packet->append(0x03);               // 0x02 -> GOODBYE MESSAGE
+    packet->append(0x03);               // 0x03 -> GOODBYE MESSAGE
     packet->append("Bye Bye");
     mSocket->writeDatagram(packet->data(), packet->length(), QHostAddress::Broadcast, UDP_PORT);
     delete packet;
