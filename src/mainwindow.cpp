@@ -139,6 +139,7 @@ void MainWindow::startFileTransfer(QStringList files)
     }
 
     ui->tabWidget->setEnabled(false);
+    ui->buttonChangeDir->setEnabled(false);
     ui->statusBar->showMessage("Sending files...");
     ui->progressBar->setValue(0);
     mProtocol->sendFile(dest, files);
@@ -158,18 +159,21 @@ void MainWindow::sendFileComplete(QStringList *files)
         log("Multiple files and folders sent.", "");
     }
     ui->tabWidget->setEnabled(true);
+    ui->buttonChangeDir->setEnabled(true);
 }
 
 void MainWindow::receiveFileStart()
 {
     ui->progressBar->setValue(0);
     ui->tabWidget->setEnabled(false);
+    ui->buttonChangeDir->setEnabled(false);
     ui->statusBar->showMessage("Receiving files...");
 }
 
 void MainWindow::receiveFileComplete(QStringList *files)
 {
     ui->tabWidget->setEnabled(true);
+    ui->buttonChangeDir->setEnabled(true);
     QApplication::alert(this, 3000);
     if (files->count() == 1)
     {
@@ -188,6 +192,7 @@ void MainWindow::receiveFileComplete(QStringList *files)
 void MainWindow::receiveFileCancelled()
 {
     ui->tabWidget->setEnabled(true);
+    ui->buttonChangeDir->setEnabled(true);
     ui->progressBar->setValue(0);
     ui->statusBar->showMessage("Transfer cancelled.");
     log("Transfer cancelled.", "");
@@ -215,6 +220,7 @@ void MainWindow::sendFileError(int e)
     QMessageBox::critical(this, "Send file", "An error has occurred while sending the file (" + QString::number(e, 10) + ").");
     ui->progressBar->setValue(0);
     ui->tabWidget->setEnabled(true);
+    ui->buttonChangeDir->setEnabled(true);
 }
 
 void MainWindow::on_listPeers_itemDoubleClicked(QListWidgetItem* item)
