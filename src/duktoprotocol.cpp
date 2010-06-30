@@ -22,6 +22,7 @@
 #include <QStringList>
 #include <QFileInfo>
 #include <QDir>
+#include <QDebug>
 
 #define UDP_PORT 4644
 #define TCP_PORT 4644
@@ -185,19 +186,46 @@ void DuktoProtocol::readNewData()
             // Se l'elemento corrente è una cartella, la creo e passo all'elemento successivo
             if (mElementSize == -1)
             {
+                // Verifico il nome della cartella "root"
+                QString rootName = name.section("/", 0, 0);
+
+                // Se non ho ancora trattato questa root, lo faccio ora
+                if (mRootFolderName != rootName) {
+
+                    // Verifico se ho già una cartella con questo nome
+                    // nel caso trovo un nome alternativo
+                    int i = 2;
+                    QString originalName = name;
+                    while (QFile::exists(name))
+                        name = originalName + " (" + QString::number(i++) + ")";
+                    mRootFolderName = originalName;
+                    mRootFolderRenamed = name;
+
+                }
+
+                // Se invece l'ho già trattata, allora rinomino questo percorso
+                else if (mRootFolderName != mRootFolderRenamed)
+                    name = name.replace(0, name.indexOf('/'), mRootFolderRenamed);
+
+                // Creo la cartella
                 QDir dir(".");
                 dir.mkpath(name);
+                qDebug() << name;
                 continue;
             }
 
             // Altrimenti creo il nuovo file
             else
             {
+                // Se il file è in una cartella rinominata, devo provvedere di conseguenza
+                if ((name.indexOf('/') != -1) && (name.section("/", 0, 0) == mRootFolderName))
+                    name = name.replace(0, name.indexOf('/'), mRootFolderRenamed);
+
                 // Se il file esiste già cambio il nome di quello nuovo
                 int i = 2;
-                QString originalname = name;
+                QString originalName = name;
                 while (QFile::exists(name)) {
-                    QFileInfo fi(originalname);
+                    QFileInfo fi(originalName);
                     name = fi.baseName() + " (" + QString::number(i) + ")." + fi.completeSuffix();
                     i++;
                 }

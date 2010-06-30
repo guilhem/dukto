@@ -94,6 +94,8 @@ private:
     qint64 mTotalReceivedData;         // Quantità di dati ricevuti totale
     qint64 mElementReceivedData;       // Quantità di dati ricevuti per l'elemento corrente
     qint64 mElementSize;               // Dimensione dell'elemento corrente
+    QString mRootFolderName;           // Nome della cartella principale ricevuta
+    QString mRootFolderRenamed;        // Nome della cartella principale da utilizzare
     QStringList *mReceivedFiles;        // Elenco degli elementi da trasmettere
 
 };
