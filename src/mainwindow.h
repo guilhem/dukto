@@ -51,6 +51,7 @@ public slots:
 
 private:
     void startFileTransfer(QStringList files);
+    void startTextTransfer(QString text);
     void log(QString text, QString filename);
 
     Ui::MainWindowClass *ui;
@@ -58,6 +59,7 @@ private:
 
 
 private slots:
+    void on_buttonSendTextToIp_clicked();
     void on_buttonChangeDir_clicked();
     void on_listLog_itemDoubleClicked(QListWidgetItem* item);
     void on_listPeers_itemDoubleClicked(QListWidgetItem* item);

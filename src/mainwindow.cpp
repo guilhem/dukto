@@ -3,6 +3,7 @@
 #include "listwidgetpeeritem.h"
 #include "listwidgetlogitem.h"
 #include "oslib.h"
+#include "textdialog.h"
 
 #include <QtGui/QMessageBox>
 /* DUKTO - A simple, fast and multi-platform file transfer tool for LAN users
@@ -145,13 +146,51 @@ void MainWindow::startFileTransfer(QStringList files)
     mProtocol->sendFile(dest, files);
 }
 
+void MainWindow::startTextTransfer(QString text)
+{
+
+    QString dest;
+    if (ui->tabWidget->currentIndex() == 0)
+    {
+        if (ui->listPeers->selectedItems().count() > 0) {
+            ListWidgetPeerItem *i = static_cast<ListWidgetPeerItem*>(ui->listPeers->selectedItems().at(0));
+            dest = i->getPeerKey();
+        }
+        else {
+            QMessageBox::critical(this, "Error", "No peer available as target.");
+            return;
+        }
+
+    }
+    else if (ui->tabWidget->currentIndex() == 1)
+    {
+        dest = ui->textDestination->text();
+        if (dest.length() == 0) {
+            QMessageBox::critical(this, "Error", "No ip address or hostname specified.");
+            return;
+        }
+    }
+
+    ui->tabWidget->setEnabled(false);
+    ui->buttonChangeDir->setEnabled(false);
+    ui->statusBar->showMessage("Sending text...");
+    ui->progressBar->setValue(0);
+    mProtocol->sendText(dest, text);
+}
+
 void MainWindow::sendFileComplete(QStringList *files)
 {
     if (files->count() == 1)
     {
         QFileInfo fi(files->at(0));
-        ui->statusBar->showMessage("File '" + fi.fileName() + "' sent.");
-        log("File '" + fi.fileName() + "' sent.", files->at(0));
+        if (fi.fileName() == "___DUKTO___TEXT___") {
+            ui->statusBar->showMessage("Text sent.");
+            // log("Text sent.");
+        }
+        else {
+            ui->statusBar->showMessage("File '" + fi.fileName() + "' sent.");
+            log("File '" + fi.fileName() + "' sent.", files->at(0));
+        }
     }
     else
     {
@@ -213,6 +252,7 @@ void MainWindow::on_buttonSendToIp_clicked()
 void MainWindow::on_textDestination_textChanged(QString s)
 {
     ui->buttonSendToIp->setEnabled((s != ""));
+    ui->buttonSendTextToIp->setEnabled((s != ""));
 }
 
 void MainWindow::sendFileError(int e)
@@ -252,4 +292,18 @@ void MainWindow::on_buttonChangeDir_clicked()
     if (dirname == "") return;
     QDir::setCurrent(dirname);
     ui->labelOutput->setText(OsLib::adaptPath(QDir::currentPath()));
+}
+
+void MainWindow::on_buttonSendTextToIp_clicked()
+{
+    // Visualizzazione finestra di input testo
+    TextDialog td(this);
+    td.setMode(true);
+    int ret = td.exec();
+    if (ret != QDialog::Accepted) return;
+
+    // Invio dati
+    QString text = td.getText();
+    startTextTransfer(text);
+
 }

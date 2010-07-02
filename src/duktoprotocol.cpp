@@ -317,6 +317,26 @@ void DuktoProtocol::sendFile(QString ipDest, QStringList files)
     mCurrentSocket->connectToHost(ipDest, TCP_PORT);
 }
 
+void DuktoProtocol::sendText(QString ipDest, QString text)
+{
+    // Verifica altre attività in corso
+    if (mIsReceiving || mIsSending) return;
+    mIsSending = true;
+
+    // Testo da inviare
+    mFilesToSend = new QStringList();
+    mFilesToSend->append("___DUKTO___TEXT___");
+    mFileCounter = 0;
+    mTextToSend = text;
+
+    // Connessione al destinatario
+    mCurrentSocket = new QTcpSocket(this);
+    connect(mCurrentSocket, SIGNAL(connected()), this, SLOT(sendMetaData()), Qt::DirectConnection);
+    connect(mCurrentSocket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(sendConnectError(QAbstractSocket::SocketError)), Qt::DirectConnection);
+    connect(mCurrentSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(sendData(qint64)), Qt::DirectConnection);
+    mCurrentSocket->connectToHost(ipDest, TCP_PORT);
+}
+
 void DuktoProtocol::sendMetaData()
 {
     // Header
@@ -366,6 +386,17 @@ void DuktoProtocol::sendData(qint64 b)
     // Se ci sono altri dati da inviare, attendo
     // che vengano inviati
     if (mSentBuffer > 0) return;
+
+    // Se si tratta di un invio testuale, butto dentro
+    // tutto il testo
+    if ((!mTextToSend.isEmpty()) && (mFilesToSend->at(mFileCounter - 1) == "___DUKTO___TEXT___"))
+    {
+        d.append(mTextToSend.toUtf8().data());
+        mCurrentSocket->write(d);
+        mSentBuffer = d.size();
+        mTextToSend.clear();
+        return;
+    }
 
     // Se il file corrente non è ancora terminato
     // invio una nuova parte del file
@@ -498,9 +529,16 @@ QByteArray DuktoProtocol::nextElementHeader()
         mCurrentFile = NULL;
     }
 
+    // Verifico se si tratta di un invio testo
+    if (fullname == "___DUKTO___TEXT___") {
+        header.append(fullname.toAscii() + '\0');
+        qint64 size = mTextToSend.toUtf8().length();
+        header.append((char*) &size, sizeof(size));
+        return header;
+    }
+
     // Nome elemento
     QString name = fullname;
-    QFileInfo fi(fullname);
     name.replace(mBasePath + "/", "");
     header.append(name.toAscii() + '\0');
 
@@ -523,6 +561,11 @@ QByteArray DuktoProtocol::nextElementHeader()
 // Calcola l'occupazione totale di tutti i file da trasferire
 qint64 DuktoProtocol::computeTotalSize(QStringList *e)
 {
+    // Se è un invio testuale
+    if ((e->length() == 1) && (e->at(0) == "___DUKTO___TEXT___"))
+        return mTextToSend.toUtf8().length();
+
+    // Se è un invio normale
     qint64 size = 0;
     for (int i = 0; i < e->count(); i++)
     {

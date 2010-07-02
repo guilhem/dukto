@@ -41,6 +41,7 @@ public:
     void sayGoodbye();
     inline QHash<QString, Peer>& getPeers() { return mPeers; }
     void sendFile(QString ipDest, QStringList files);
+    void sendText(QString ipDest, QString text);
     inline bool isBusy() { return mIsSending || mIsReceiving; }
     
 public slots:
@@ -88,6 +89,7 @@ private:
     qint64 mSentData;               // Quantità di dati totale trasmessi
     qint64 mSentBuffer;             // Quantità di dati rimanenti nel buffer di trasmissione
     QString mBasePath;              // Percorso base per l'invio di file e cartelle
+    QString mTextToSend;            // Testo da inviare (in caso di invio testuale)
 
     // Receive members
     qint64 mElementsToReceiveCount;    // Numero di elementi da ricevere
