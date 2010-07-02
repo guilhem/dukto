@@ -185,7 +185,7 @@ void MainWindow::sendFileComplete(QStringList *files)
         QFileInfo fi(files->at(0));
         if (fi.fileName() == "___DUKTO___TEXT___") {
             ui->statusBar->showMessage("Text sent.");
-            // log("Text sent.");
+            log("Text sent.", "");
         }
         else {
             ui->statusBar->showMessage("File '" + fi.fileName() + "' sent.");
