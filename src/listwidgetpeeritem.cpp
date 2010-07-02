@@ -16,11 +16,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include "listwidgetlogitem.h"
+#include "listwidgetpeeritem.h"
 
-ListWidgetLogItem::ListWidgetLogItem(QListWidget * parent, QString text, QString filename)
-        : QListWidgetItem(parent, QListWidgetItem::UserType)
+ListWidgetPeerItem::ListWidgetPeerItem(QListWidget * parent, QString text, QString peerKey)
+        : QListWidgetItem(parent, QListWidgetItem::Type)
 {
     setText(text);
-    mFilename = filename;
+    mPeerKey = peerKey;
+    setIcon(QIcon(":/duktoIcon"));
 }
