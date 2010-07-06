@@ -27,7 +27,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -36,6 +36,9 @@
        <layout class="QVBoxLayout" name="verticalLayout_5">
         <item>
          <widget class="QListWidget" name="listPeers">
+          <property name="contextMenuPolicy">
+           <enum>Qt::ActionsContextMenu</enum>
+          </property>
           <property name="iconSize">
            <size>
             <width>16</width>

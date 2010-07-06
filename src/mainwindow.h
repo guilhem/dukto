@@ -48,6 +48,8 @@ public slots:
     void receiveFileComplete(QStringList *files);
     void receiveFileCancelled();
     void transferStatusUpdate(int p);
+    void contextMenu_sendFiles();
+    void contextMenu_sendText();
 
 private:
     void startFileTransfer(QStringList files);
@@ -65,6 +67,7 @@ private slots:
     void on_listPeers_itemDoubleClicked(QListWidgetItem* item);
     void on_textDestination_textChanged(QString );
     void on_buttonSendToIp_clicked();
+
 };
 
 #endif // MAINWINDOW_H

@@ -1,11 +1,3 @@
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
-#include "listwidgetpeeritem.h"
-#include "listwidgetlogitem.h"
-#include "oslib.h"
-#include "textdialog.h"
-
-#include <QtGui/QMessageBox>
 /* DUKTO - A simple, fast and multi-platform file transfer tool for LAN users
  * Copyright (C) 2009 Emanuele Colombo
  *
@@ -24,10 +16,18 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
+#include "listwidgetpeeritem.h"
+#include "listwidgetlogitem.h"
+#include "oslib.h"
+#include "textdialog.h"
+
 #include <QtGui/QFileDialog>
 #include <QUrl>
 #include <QTime>
 #include <QDir>
+#include <QtGui/QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindowClass), mProtocol(NULL)
@@ -36,6 +36,15 @@ MainWindow::MainWindow(QWidget *parent)
     ui->statusBar->showMessage("Drag some files and folders in this window to send them.");
     ui->labelOutput->setText(OsLib::adaptPath(QDir::currentPath()));
 
+    // Context menu actions for buddy list
+    QAction *action;
+    action = new QAction("Send files...", this);
+    connect(action, SIGNAL(triggered()), this, SLOT(contextMenu_sendFiles()));
+    ui->listPeers->addAction(action);
+    action = new QAction("Send text...", this);
+    action->setPriority(QAction::HighPriority);
+    connect(action, SIGNAL(triggered()), this, SLOT(contextMenu_sendText()));
+    ui->listPeers->addAction(action);
 }
 
 MainWindow::~MainWindow()
@@ -305,5 +314,43 @@ void MainWindow::on_buttonSendTextToIp_clicked()
     // Invio dati
     QString text = td.getText();
     startTextTransfer(text);
+
+}
+
+void MainWindow::contextMenu_sendFiles()
+{
+    // Recupero elemento selezionato
+    ListWidgetPeerItem *i = NULL;
+    if (ui->listPeers->selectedItems().count() > 0) {
+        i = static_cast<ListWidgetPeerItem*>(ui->listPeers->selectedItems().at(0));
+    }
+    else {
+        QMessageBox::critical(this, "Error", "No peer available as target.");
+        return;
+    }
+
+    // Gestisco l'evento come un doppio click
+    on_listPeers_itemDoubleClicked(i);
+
+}
+
+void MainWindow::contextMenu_sendText()
+{
+    // Recupero l'elemento selezionato
+    if (ui->listPeers->selectedItems().count() == 0) {
+        QMessageBox::critical(this, "Error", "No peer available as target.");
+        return;
+    }
+
+    // Visualizzazione finestra di input testo
+    TextDialog td(this);
+    td.setMode(true);
+    int ret = td.exec();
+    if (ret != QDialog::Accepted) return;
+
+    // Invio dati
+    QString text = td.getText();
+    startTextTransfer(text);
+
 
 }
