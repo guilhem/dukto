@@ -97,6 +97,13 @@
           </property>
          </spacer>
         </item>
+        <item>
+         <widget class="QLabel" name="labelIPs">
+          <property name="text">
+           <string>Current IP addresses: </string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
       <widget class="QWidget" name="tab_3">
@@ -124,7 +131,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Dukto R2 - June 2009</string>
+           <string>Dukto R3 - _________ 2010</string>
           </property>
          </widget>
         </item>

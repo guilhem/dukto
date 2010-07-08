@@ -55,6 +55,7 @@ private:
     void startFileTransfer(QStringList files);
     void startTextTransfer(QString text);
     void log(QString text, QString filename);
+    QString getAllIPString();
 
     Ui::MainWindowClass *ui;
     DuktoProtocol *mProtocol;

@@ -28,6 +28,7 @@
 #include <QTime>
 #include <QDir>
 #include <QtGui/QMessageBox>
+#include <QNetworkInterface>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindowClass), mProtocol(NULL)
@@ -35,6 +36,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     ui->statusBar->showMessage("Drag some files and folders in this window to send them.");
     ui->labelOutput->setText(OsLib::adaptPath(QDir::currentPath()));
+    ui->labelIPs->setText(ui->labelIPs->text() + getAllIPString());
 
     // Context menu actions for buddy list
     QAction *action;
@@ -351,6 +353,17 @@ void MainWindow::contextMenu_sendText()
     // Invio dati
     QString text = td.getText();
     startTextTransfer(text);
+}
 
-
+QString MainWindow::getAllIPString()
+{
+    // Recupero tutti gli indirizzi IP
+    QList<QHostAddress> addrs = QNetworkInterface::allAddresses();
+    QString ret = "";
+    for (int i = 0; i < addrs.length(); i++)
+        if ((addrs[i].protocol() == QAbstractSocket::IPv4Protocol)
+            && (addrs[i].toString() != "127.0.0.1"))
+            ret += ", " + addrs[i].toString();
+    if (ret.length() > 0) ret = ret.mid(2);
+    return ret;
 }
