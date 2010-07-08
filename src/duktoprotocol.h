@@ -67,6 +67,7 @@ private:
     void addRecursive(QStringList *e, QString path);
     qint64 computeTotalSize(QStringList *e);
     QByteArray nextElementHeader();
+    void sendToAllBroadcast(QByteArray *packet);
 
     void handleMessage(QByteArray &data, QHostAddress &sender);
     void updateStatus();

@@ -22,7 +22,7 @@
 #include <QStringList>
 #include <QFileInfo>
 #include <QDir>
-#include <QDebug>
+#include <QNetworkInterface>
 
 #define UDP_PORT 4644
 #define TCP_PORT 4644
@@ -32,7 +32,7 @@ DuktoProtocol::DuktoProtocol()
         mCurrentFile(NULL), mFilesToSend(NULL)
 {
     mSocket = new QUdpSocket(this);
-    mSocket->bind(UDP_PORT);
+    mSocket->bind(QHostAddress::Any, UDP_PORT);
     connect(mSocket, SIGNAL(readyRead()), this, SLOT(newUdpData()));
 
     mTcpServer = new QTcpServer(this);
@@ -54,13 +54,20 @@ DuktoProtocol::~DuktoProtocol()
 
 void DuktoProtocol::sayHello(QHostAddress dest)
 {
+    // Preparazione pacchetto
     QByteArray *packet = new QByteArray();
     if (dest == QHostAddress::Broadcast)
         packet->append(0x01);           // 0x01 -> HELLO MESSAGE (broadcast)
     else
         packet->append(0x02);           // 0x02 -> HELLO MESSAGE (unicast)
     packet->append(OsLib::retrieveSystemName());
-    mSocket->writeDatagram(packet->data(), packet->length(), dest, UDP_PORT);
+
+    // Invio pacchetto
+    if (dest == QHostAddress::Broadcast)
+        sendToAllBroadcast(packet);
+    else
+        mSocket->writeDatagram(packet->data(), packet->length(), dest, UDP_PORT);
+
     delete packet;
 }
 
@@ -69,7 +76,7 @@ void DuktoProtocol::sayGoodbye()
     QByteArray *packet = new QByteArray();
     packet->append(0x03);               // 0x03 -> GOODBYE MESSAGE
     packet->append("Bye Bye");
-    mSocket->writeDatagram(packet->data(), packet->length(), QHostAddress::Broadcast, UDP_PORT);
+    sendToAllBroadcast(packet);
     delete packet;
 }
 
@@ -575,3 +582,22 @@ qint64 DuktoProtocol::computeTotalSize(QStringList *e)
     return size;
 }
 
+// Invia un pacchetto a tutti gli indirizzi broadcast del PC
+void DuktoProtocol::sendToAllBroadcast(QByteArray *packet)
+{
+    // Elenco interfacce disponibili
+    QList<QNetworkInterface> ifaces = QNetworkInterface::allInterfaces();
+
+    // Iterazione sulle interfacce
+    for (int i = 0; i < ifaces.size(); i++)
+    {
+        // Iterazione per tutti gli IP dell'interfaccia
+        QList<QNetworkAddressEntry> addrs = ifaces[i].addressEntries();
+
+        // Invio pacchetto per ogni IP di broadcast
+        for (int j = 0; j < addrs.size(); j++)
+            mSocket->writeDatagram(packet->data(), packet->length(), addrs[j].broadcast(), UDP_PORT);
+
+    }
+
+}
