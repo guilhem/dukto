@@ -62,6 +62,7 @@ void MainWindow::setProtocolReference(DuktoProtocol *p)
     connect(p, SIGNAL(sendFileError(int)), this, SLOT(sendFileError(int)));
     connect(p, SIGNAL(receiveFileStart()), this, SLOT(receiveFileStart()));
     connect(p, SIGNAL(receiveFileComplete(QStringList*)), this, SLOT(receiveFileComplete(QStringList*)));
+    connect(p, SIGNAL(receiveTextComplete(QString*)), this, SLOT(receiveTextComplete(QString*)));
     connect(p, SIGNAL(receiveFileCancelled()), this, SLOT(receiveFileCancelled()));
     connect(p, SIGNAL(transferStatusUpdate(int)), this, SLOT(transferStatusUpdate(int)), Qt::DirectConnection);
 }
@@ -314,7 +315,7 @@ void MainWindow::on_buttonSendTextToIp_clicked()
     if (ret != QDialog::Accepted) return;
 
     // Invio dati
-    QString text = td.getText();
+    QString text = td.contents();
     startTextTransfer(text);
 
 }
@@ -351,7 +352,7 @@ void MainWindow::contextMenu_sendText()
     if (ret != QDialog::Accepted) return;
 
     // Invio dati
-    QString text = td.getText();
+    QString text = td.contents();
     startTextTransfer(text);
 }
 
@@ -366,4 +367,31 @@ QString MainWindow::getAllIPString()
             ret += ", " + addrs[i].toString();
     if (ret.length() > 0) ret = ret.mid(2);
     return ret;
+}
+
+void MainWindow::receiveTextComplete(QString *text)
+{
+    // Ripristino finestra principale
+    ui->tabWidget->setEnabled(true);
+    ui->buttonChangeDir->setEnabled(true);
+    log("Text message received.", "");
+
+    // Apertura finestra con messaggio di testo
+    TextDialog *td = new TextDialog(this);
+    td->setModal(false);
+    td->setMode(false);
+    td->setContents(*text);
+    td->show();
+
+    // TODO: verificare come liberare la memoria del dialog
+
+    // Alert applicazione
+    QApplication::alert(this, 3000);
+}
+
+void MainWindow::on_buttonOpenDir_clicked()
+{
+    // Apertura finestra del sistema operativo
+    // relativa alla cartella corrente
+    OsLib::openFolder(OsLib::adaptPath(QDir::currentPath()));
 }

@@ -44,6 +44,12 @@ public:
         #endif
     }
 
+    static inline void openFolder(QString path) {
+        #if defined(Q_WS_WIN)
+        ::ShellExecute(NULL, NULL, path.toStdWString().c_str(), NULL, NULL, SW_SHOWNORMAL);
+        #endif
+    }
+
 private:
     OsLib() { }
 

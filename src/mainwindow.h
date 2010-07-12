@@ -46,6 +46,7 @@ public slots:
     void sendFileError(int e);
     void receiveFileStart();
     void receiveFileComplete(QStringList *files);
+    void receiveTextComplete(QString *text);
     void receiveFileCancelled();
     void transferStatusUpdate(int p);
     void contextMenu_sendFiles();
@@ -62,6 +63,7 @@ private:
 
 
 private slots:
+    void on_buttonOpenDir_clicked();
     void on_buttonSendTextToIp_clicked();
     void on_buttonChangeDir_clicked();
     void on_listLog_itemDoubleClicked(QListWidgetItem* item);

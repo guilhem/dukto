@@ -29,6 +29,11 @@ void TextDialog::setMode(bool send) {
 
 }
 
-QString TextDialog::getText() {
+QString TextDialog::contents() {
     return ui->textBox->toPlainText();
 }
+
+void TextDialog::setContents(QString c) {
+    ui->textBox->setPlainText(c);
+}
+

@@ -15,7 +15,8 @@ public:
     explicit TextDialog(QWidget *parent = 0);
     ~TextDialog();
     void setMode(bool send);
-    QString getText();
+    void setContents(QString c);
+    QString contents();
 
 private:
     Ui::TextDialog *ui;

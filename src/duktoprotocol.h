@@ -59,6 +59,7 @@ signals:
      void sendFileError(int code);
      void receiveFileStart();
      void receiveFileComplete(QStringList *files);
+     void receiveTextComplete(QString *text);
      void receiveFileCancelled();
      void transferStatusUpdate(int p);
 
@@ -100,6 +101,8 @@ private:
     QString mRootFolderName;           // Nome della cartella principale ricevuta
     QString mRootFolderRenamed;        // Nome della cartella principale da utilizzare
     QStringList *mReceivedFiles;        // Elenco degli elementi da trasmettere
+    QString mTextToReceive;             // Testo ricevuto in caso di invio testo
+    bool mReceivingText;               // Ricezione di testo in corso
 
 };
 

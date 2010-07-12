@@ -221,6 +221,14 @@ void DuktoProtocol::readNewData()
                 continue;
             }
 
+            // Potrebbe essere un invio di testo
+            else if (name == "___DUKTO___TEXT___")
+            {
+                mReceivingText = true;
+                mTextToReceive = "";
+                mCurrentFile = NULL;
+            }
+
             // Altrimenti creo il nuovo file
             else
             {
@@ -238,6 +246,7 @@ void DuktoProtocol::readNewData()
                 }
                 mCurrentFile = new QFile(name);
                 mCurrentFile->open(QIODevice::WriteOnly);
+                mReceivingText = false;
             }
 
         }
@@ -248,19 +257,27 @@ void DuktoProtocol::readNewData()
                     ? (mElementSize - mElementReceivedData)
                     : mCurrentSocket->bytesAvailable();
         QByteArray d = mCurrentSocket->read(s);
-        mCurrentFile->write(d);
         mElementReceivedData += d.size();
         mTotalReceivedData += d.size();
         updateStatus();
+
+        // Salvo i dati letti
+        if (!mReceivingText)
+            mCurrentFile->write(d);
+        else
+            mTextToReceive += d;
 
         // Verifico se ho completato l'elemento corrente
         if (mElementReceivedData == mElementSize)
         {
             // Completato, chiudo il file e mi preparo per il prossimo elemento
             mElementSize = -1;
-            mCurrentFile->close();
-            delete mCurrentFile;
-            mCurrentFile = NULL;
+            if (!mReceivingText)
+            {
+                mCurrentFile->close();
+                delete mCurrentFile;
+                mCurrentFile = NULL;
+            }
         }
     }
 
@@ -283,8 +300,14 @@ void DuktoProtocol::closedConnection()
         QFile::remove(name);
         receiveFileCancelled();
     }
-    else
+
+    // Ricezione file conclusa
+    else if (!mReceivingText)
         receiveFileComplete(mReceivedFiles);
+
+    // Ricezione testo conclusa
+    else
+        receiveTextComplete(&mTextToReceive);
 
     // Chiusura socket
     if (mCurrentSocket)
