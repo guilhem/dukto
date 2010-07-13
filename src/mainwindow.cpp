@@ -397,8 +397,6 @@ void MainWindow::on_buttonOpenDir_clicked()
 
 void MainWindow::on_listPeers_itemSelectionChanged()
 {
-    QMessageBox::information(this, "AAA", "EVENTO");
-
     if (ui->listPeers->selectedItems().count() > 0)
         ui->listPeers->setContextMenuPolicy(Qt::ActionsContextMenu);
     else
