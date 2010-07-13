@@ -16,24 +16,33 @@ TextDialog::~TextDialog()
     delete ui;
 }
 
-void TextDialog::setMode(bool send) {
+void TextDialog::setMode(bool send)
+{
 
-    if (send) {
+    if (send)
+    {
         ui->buttonBox->setStandardButtons(QDialogButtonBox::Cancel|QDialogButtonBox::Ok);
         ui->textBox->setReadOnly(false);
     }
-    else {
+    else
+    {
         ui->buttonBox->setStandardButtons(QDialogButtonBox::Close);
         ui->textBox->setReadOnly(true);
     }
 
 }
 
-QString TextDialog::contents() {
+QString TextDialog::contents()
+{
     return ui->textBox->toPlainText();
 }
 
-void TextDialog::setContents(QString c) {
+void TextDialog::setContents(QString c)
+{
     ui->textBox->setPlainText(c);
 }
 
+void TextDialog::closeEvent(QCloseEvent *event)
+{
+    this->deleteLater();
+}

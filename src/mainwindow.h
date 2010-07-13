@@ -63,6 +63,7 @@ private:
 
 
 private slots:
+    void on_listPeers_itemSelectionChanged();
     void on_buttonOpenDir_clicked();
     void on_buttonSendTextToIp_clicked();
     void on_buttonChangeDir_clicked();

@@ -17,6 +17,7 @@ public:
     void setMode(bool send);
     void setContents(QString c);
     QString contents();
+    void closeEvent(QCloseEvent *event);
 
 private:
     Ui::TextDialog *ui;

@@ -47,6 +47,7 @@ MainWindow::MainWindow(QWidget *parent)
     action->setPriority(QAction::HighPriority);
     connect(action, SIGNAL(triggered()), this, SLOT(contextMenu_sendText()));
     ui->listPeers->addAction(action);
+    ui->listPeers->setContextMenuPolicy(Qt::PreventContextMenu);
 }
 
 MainWindow::~MainWindow()
@@ -383,8 +384,6 @@ void MainWindow::receiveTextComplete(QString *text)
     td->setContents(*text);
     td->show();
 
-    // TODO: verificare come liberare la memoria del dialog
-
     // Alert applicazione
     QApplication::alert(this, 3000);
 }
@@ -394,4 +393,14 @@ void MainWindow::on_buttonOpenDir_clicked()
     // Apertura finestra del sistema operativo
     // relativa alla cartella corrente
     OsLib::openFolder(OsLib::adaptPath(QDir::currentPath()));
+}
+
+void MainWindow::on_listPeers_itemSelectionChanged()
+{
+    QMessageBox::information(this, "AAA", "EVENTO");
+
+    if (ui->listPeers->selectedItems().count() > 0)
+        ui->listPeers->setContextMenuPolicy(Qt::ActionsContextMenu);
+    else
+        ui->listPeers->setContextMenuPolicy(Qt::PreventContextMenu);
 }
