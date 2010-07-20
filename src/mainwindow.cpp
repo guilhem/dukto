@@ -33,7 +33,14 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindowClass), mProtocol(NULL)
 {
+
+    // Main window initialization
     ui->setupUi(this);
+
+    // Taskbar integration with Win7
+    win7.init(this->winId());
+
+    // Window data setup
     ui->statusBar->showMessage("Drag some files and folders in this window to send them.");
     ui->labelOutput->setText(OsLib::adaptPath(QDir::currentPath()));
     ui->labelIPs->setText(ui->labelIPs->text() + getAllIPString());
@@ -53,6 +60,11 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+bool MainWindow::winEvent(MSG * message, long * result)
+{
+    return win7.winEvent(message, result);
 }
 
 void MainWindow::setProtocolReference(DuktoProtocol *p)
@@ -212,6 +224,7 @@ void MainWindow::sendFileComplete(QStringList *files)
     }
     ui->tabWidget->setEnabled(true);
     ui->buttonChangeDir->setEnabled(true);
+    win7.setProgressState(win7.NoProgress);
 }
 
 void MainWindow::receiveFileStart()
@@ -220,13 +233,14 @@ void MainWindow::receiveFileStart()
     ui->tabWidget->setEnabled(false);
     ui->buttonChangeDir->setEnabled(false);
     ui->statusBar->showMessage("Receiving files...");
+    win7.setProgressValue(0, 100);
+    win7.setProgressState(win7.Normal);
 }
 
 void MainWindow::receiveFileComplete(QStringList *files)
 {
     ui->tabWidget->setEnabled(true);
     ui->buttonChangeDir->setEnabled(true);
-    QApplication::alert(this, 3000);
     if (files->count() == 1)
     {
         ui->statusBar->showMessage("File '" + files->at(0) +  "' received.");
@@ -239,6 +253,8 @@ void MainWindow::receiveFileComplete(QStringList *files)
         ui->statusBar->showMessage("Multiple files and folders received.");
         log("Multiple files and folders received.", "");
     }
+    win7.setProgressState(win7.NoProgress);
+    QApplication::alert(this, 3000);
 }
 
 void MainWindow::receiveFileCancelled()
@@ -248,11 +264,13 @@ void MainWindow::receiveFileCancelled()
     ui->progressBar->setValue(0);
     ui->statusBar->showMessage("Transfer cancelled.");
     log("Transfer cancelled.", "");
+    win7.setProgressState(win7.Error);
 }
 
 void MainWindow::transferStatusUpdate(int p)
 {
     ui->progressBar->setValue(p);
+    win7.setProgressValue(p, 100);
 }
 
 void MainWindow::on_buttonSendToIp_clicked()
@@ -274,6 +292,7 @@ void MainWindow::sendFileError(int e)
     ui->progressBar->setValue(0);
     ui->tabWidget->setEnabled(true);
     ui->buttonChangeDir->setEnabled(true);
+    win7.setProgressState(win7.Error);
 }
 
 void MainWindow::on_listPeers_itemDoubleClicked(QListWidgetItem* item)

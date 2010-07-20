@@ -6,6 +6,7 @@
 #include <QtGui/QDropEvent>
 #include <QtGui/QListWidgetItem>
 #include "duktoprotocol.h"
+#include "ecwin7.h"
 
 namespace Ui
 {
@@ -40,6 +41,9 @@ public:
     void dragEnterEvent(QDragEnterEvent *e);
     void dropEvent(QDropEvent *e);
 
+protected:
+    bool winEvent(MSG * message, long * result);
+
 public slots:
     void refreshPeerList();
     void sendFileComplete(QStringList *files);
@@ -60,7 +64,7 @@ private:
 
     Ui::MainWindowClass *ui;
     DuktoProtocol *mProtocol;
-
+    EcWin7 win7;
 
 private slots:
     void on_listPeers_itemSelectionChanged();
