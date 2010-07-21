@@ -84,7 +84,6 @@ void MainWindow::setProtocolReference(DuktoProtocol *p)
 void MainWindow::refreshPeerList()
 {
     QHash<QString, Peer>& peers = mProtocol->getPeers();
-    QStringList list;
     QHashIterator<QString, Peer> i(peers);
 
     // Salvataggio elemento corrente
@@ -164,9 +163,7 @@ void MainWindow::startFileTransfer(QStringList files)
         return;
     }
 
-    ui->tabWidget->setEnabled(false);
-    ui->buttonChangeDir->setEnabled(false);
-    ui->statusBar->showMessage("Sending files...");
+    setBusy(true, "Sending files...");
     ui->progressBar->setValue(0);
     mProtocol->sendFile(dest, files);
 }
@@ -196,9 +193,7 @@ void MainWindow::startTextTransfer(QString text)
         }
     }
 
-    ui->tabWidget->setEnabled(false);
-    ui->buttonChangeDir->setEnabled(false);
-    ui->statusBar->showMessage("Sending text...");
+    setBusy(true, "Sending text...");
     ui->progressBar->setValue(0);
     mProtocol->sendText(dest, text);
 }
@@ -222,25 +217,22 @@ void MainWindow::sendFileComplete(QStringList *files)
         ui->statusBar->showMessage("Multiple files and folders sent.");
         log("Multiple files and folders sent.", "");
     }
-    ui->tabWidget->setEnabled(true);
-    ui->buttonChangeDir->setEnabled(true);
+
+    setBusy(false);
     win7.setProgressState(win7.NoProgress);
 }
 
 void MainWindow::receiveFileStart()
 {
+    setBusy(true, "Receiving files...");
     ui->progressBar->setValue(0);
-    ui->tabWidget->setEnabled(false);
-    ui->buttonChangeDir->setEnabled(false);
-    ui->statusBar->showMessage("Receiving files...");
     win7.setProgressValue(0, 100);
     win7.setProgressState(win7.Normal);
 }
 
 void MainWindow::receiveFileComplete(QStringList *files)
 {
-    ui->tabWidget->setEnabled(true);
-    ui->buttonChangeDir->setEnabled(true);
+    setBusy(false);
     if (files->count() == 1)
     {
         ui->statusBar->showMessage("File '" + files->at(0) +  "' received.");
@@ -259,8 +251,7 @@ void MainWindow::receiveFileComplete(QStringList *files)
 
 void MainWindow::receiveFileCancelled()
 {
-    ui->tabWidget->setEnabled(true);
-    ui->buttonChangeDir->setEnabled(true);
+    setBusy(false, "Transfer cancelled.");
     ui->progressBar->setValue(0);
     ui->statusBar->showMessage("Transfer cancelled.");
     log("Transfer cancelled.", "");
@@ -290,8 +281,7 @@ void MainWindow::sendFileError(int e)
 {
     QMessageBox::critical(this, "Send file", "An error has occurred while sending the file (" + QString::number(e, 10) + ").");
     ui->progressBar->setValue(0);
-    ui->tabWidget->setEnabled(true);
-    ui->buttonChangeDir->setEnabled(true);
+    setBusy(false);
     win7.setProgressState(win7.Error);
 }
 
@@ -392,8 +382,7 @@ QString MainWindow::getAllIPString()
 void MainWindow::receiveTextComplete(QString *text)
 {
     // Ripristino finestra principale
-    ui->tabWidget->setEnabled(true);
-    ui->buttonChangeDir->setEnabled(true);
+    setBusy(false);
     log("Text message received.", "");
 
     // Apertura finestra con messaggio di testo
@@ -420,4 +409,17 @@ void MainWindow::on_listPeers_itemSelectionChanged()
         ui->listPeers->setContextMenuPolicy(Qt::ActionsContextMenu);
     else
         ui->listPeers->setContextMenuPolicy(Qt::PreventContextMenu);
+}
+
+void MainWindow::setBusy(bool busy)
+{
+    ui->tabWidget->setEnabled(!busy);
+    ui->buttonChangeDir->setEnabled(!busy);
+    ui->buttonOpenDir->setEnabled(!busy);
+}
+
+void MainWindow::setBusy(bool busy, QString status)
+{
+    setBusy(busy);
+    ui->statusBar->showMessage(status);
 }

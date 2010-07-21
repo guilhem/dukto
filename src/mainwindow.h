@@ -60,6 +60,8 @@ private:
     void startFileTransfer(QStringList files);
     void startTextTransfer(QString text);
     void log(QString text, QString filename);
+    void setBusy(bool busy);
+    void setBusy(bool busy, QString status);
     QString getAllIPString();
 
     Ui::MainWindowClass *ui;
