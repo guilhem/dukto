@@ -183,7 +183,21 @@ void DuktoProtocol::readNewData()
             // Lettura nome
             QString name;
             char c;
-            while (1) { mCurrentSocket->getChar(&c); if (c == '\0') break; name += c; }
+
+            // Check if part of the name has already been fetched
+            if (mPartialName.length() > 0) {
+                name = mPartialName;
+                mPartialName = "";
+            }
+            while (1) {
+                bool ret = mCurrentSocket->getChar(&c);
+                if (!ret) {
+                    mPartialName = name;
+                    return;
+                }
+                if (c == '\0') break;
+                name += c;
+            }
             mReceivedFiles->append(name);
 
             // Lettura dimensioni
@@ -217,7 +231,6 @@ void DuktoProtocol::readNewData()
                 // Creo la cartella
                 QDir dir(".");
                 dir.mkpath(name);
-                qDebug() << name;
                 continue;
             }
 
@@ -314,7 +327,6 @@ void DuktoProtocol::closedConnection()
     {
         mCurrentSocket->disconnect();
         mCurrentSocket->disconnectFromHost();
-        mCurrentSocket->waitForDisconnected(1000);
         mCurrentSocket->close();
         mCurrentSocket->deleteLater();
         mCurrentSocket = NULL;

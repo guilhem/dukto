@@ -103,6 +103,7 @@ private:
     QStringList *mReceivedFiles;        // Elenco degli elementi da trasmettere
     QString mTextToReceive;             // Testo ricevuto in caso di invio testo
     bool mReceivingText;               // Ricezione di testo in corso
+    QString mPartialName;              // Nome prossimo file letto solo in parte
 
 };
 
