@@ -23,6 +23,8 @@
 
 #if defined(Q_WS_WIN)
 #include <windows.h>
+#elif defined(Q_WS_X11)
+#include <QProcess>
 #endif
 
 class OsLib
@@ -39,9 +41,14 @@ public:
     }
 
     static inline void openFile(QString path) {
-        #if defined(Q_WS_WIN)
+    #if defined(Q_WS_WIN)
         ::ShellExecute(NULL, NULL, path.toStdWString().c_str(), NULL, NULL, SW_SHOWNORMAL);
-        #endif
+    #elif defined(Q_WS_X11)
+        QProcess shell;
+        shell.start("xdg-open", QStringList() << ("\"" + path + "\""));
+        if (!shell.waitForStarted()) return;
+        if (!shell.waitForFinished()) return;
+    #endif
     }
 
     static inline void openFolder(QString path) {
