@@ -229,8 +229,15 @@
        </item>
        <item row="0" column="3">
         <widget class="QToolButton" name="buttonOpenDir">
+         <property name="toolTip">
+          <string>Open destination folder</string>
+         </property>
          <property name="text">
-          <string>O</string>
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="resources.qrc">
+           <normaloff>:/openFolderIcon</normaloff>:/openFolderIcon</iconset>
          </property>
         </widget>
        </item>

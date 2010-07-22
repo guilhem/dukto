@@ -1,6 +1,7 @@
 <RCC>
-    <qresource prefix="/" >
-        <file alias="duktoIcon" >resources/dukto.png</file>
-        <file alias="folderIcon" >resources/folder.png</file>
+    <qresource prefix="/">
+        <file alias="duktoIcon">resources/dukto.png</file>
+        <file alias="folderIcon">resources/folder.png</file>
+        <file alias="openFolderIcon">resources/openFolder.png</file>
     </qresource>
 </RCC>
