@@ -232,7 +232,6 @@ void MainWindow::receiveFileStart()
 
 void MainWindow::receiveFileComplete(QStringList *files)
 {
-    setBusy(false);
     if (files->count() == 1)
     {
         ui->statusBar->showMessage("File '" + files->at(0) +  "' received.");
@@ -247,6 +246,7 @@ void MainWindow::receiveFileComplete(QStringList *files)
     }
     win7.setProgressState(win7.NoProgress);
     QApplication::alert(this, 3000);
+    setBusy(false);
 }
 
 void MainWindow::receiveFileCancelled()
