@@ -1,5 +1,7 @@
 #include "ecwin7.h"
 
+#include <QDebug>
+
 #if defined(Q_WS_WIN)
 
 // GUID and IID definition
@@ -15,26 +17,27 @@ DEFINE_GUID(IID_ITaskbarList3,0xea1afb91,0x9e28,0x4b86,0x90,0xE9,0x9e,0x9f,0x8a,
 
 EcWin7::EcWin7()
 {
+    mOverlayIcon = NULL;
 }
 
 void EcWin7::init(WId wid)
 {
-    windowId = wid;
+    mWindowId = wid;
 #ifdef Q_WS_WIN
-    taskbarMessageId = RegisterWindowMessage(L"TaskbarButtonCreated");
+    mTaskbarMessageId = RegisterWindowMessage(L"TaskbarButtonCreated");
 #endif
 }
 
 bool EcWin7::winEvent(MSG * message, long * result)
 {
 #ifdef Q_WS_WIN
-    if (message->message == taskbarMessageId)
+    if (message->message == mTaskbarMessageId)
     {
         HRESULT hr = CoCreateInstance(CLSID_TaskbarList,
                                       0,
                                       CLSCTX_INPROC_SERVER,
                                       IID_ITaskbarList3,
-                                      reinterpret_cast<void**> (&(taskbar)));
+                                      reinterpret_cast<void**> (&(mTaskbar)));
         *result = hr;
         return true;
     }
@@ -45,13 +48,40 @@ bool EcWin7::winEvent(MSG * message, long * result)
 void EcWin7::setProgressValue(int value, int max)
 {
 #ifdef Q_WS_WIN
-    taskbar->SetProgressValue(windowId, value, max);
+    mTaskbar->SetProgressValue(mWindowId, value, max);
 #endif
 }
 
 void EcWin7::setProgressState(ToolBarProgressState state)
 {
 #ifdef Q_WS_WIN
-    taskbar->SetProgressState(windowId, (TBPFLAG)state);
+    mTaskbar->SetProgressState(mWindowId, (TBPFLAG)state);
+#endif
+}
+
+void EcWin7::setOverlayIcon(QString iconName, QString description)
+{
+#ifdef Q_WS_WIN
+    HICON oldIcon = NULL;
+    if (mOverlayIcon != NULL) oldIcon = mOverlayIcon;
+    if (iconName == "")
+    {
+        mTaskbar->SetOverlayIcon(mWindowId, NULL, NULL);
+        mOverlayIcon = NULL;
+    }
+    else
+    {
+        mOverlayIcon = (HICON) LoadImage(GetModuleHandle(NULL),
+                                 iconName.toStdWString().c_str(),
+                                 IMAGE_ICON,
+                                 0,
+                                 0,
+                                 NULL);
+        mTaskbar->SetOverlayIcon(mWindowId, mOverlayIcon, description.toStdWString().c_str());
+    }
+    if ((oldIcon != NULL) && (oldIcon != mOverlayIcon))
+    {
+        DestroyIcon(oldIcon);
+    }
 #endif
 }

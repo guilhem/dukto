@@ -1,1 +1,2 @@
 IDI_ICON1               ICON    DISCARDABLE     "../res/icon/windows.ico"
+IDI_OVERLAY               ICON    DISCARDABLE     "../res/icon/overlay.ico"

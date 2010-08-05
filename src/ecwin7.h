@@ -93,6 +93,7 @@ class EcWin7
 public:
     EcWin7();
     void init(WId wid);
+    void setOverlayIcon(QString iconName, QString description);
     bool winEvent(MSG * message, long * result);
 
     enum ToolBarProgressState {
@@ -107,10 +108,11 @@ public:
     void setProgressState(ToolBarProgressState state);
 
 private:
-    WId windowId;
+    WId mWindowId;
 #ifdef Q_WS_WIN
-    UINT taskbarMessageId;
-    ITaskbarList3 *taskbar;
+    UINT mTaskbarMessageId;
+    ITaskbarList3 *mTaskbar;
+    HICON mOverlayIcon;
 #endif
 };
 
