@@ -223,7 +223,7 @@
        <item row="0" column="4">
         <widget class="QToolButton" name="buttonChangeDir">
          <property name="text">
-          <string>...</string>
+          <string>Change...</string>
          </property>
         </widget>
        </item>
@@ -233,11 +233,7 @@
           <string>Open destination folder</string>
          </property>
          <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="resources.qrc">
-           <normaloff>:/openFolderIcon</normaloff>:/openFolderIcon</iconset>
+          <string>Open</string>
          </property>
         </widget>
        </item>
