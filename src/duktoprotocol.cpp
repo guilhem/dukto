@@ -504,7 +504,7 @@ void DuktoProtocol::sendConnectError(QAbstractSocket::SocketError e)
     if (mCurrentSocket)
     {
         mCurrentSocket->close();
-        delete mCurrentSocket;
+        mCurrentSocket->deleteLater();
         mCurrentSocket = NULL;
     }
     if (mCurrentFile)

@@ -283,10 +283,10 @@ void MainWindow::on_textDestination_textChanged(QString s)
 
 void MainWindow::sendFileError(int e)
 {
-    QMessageBox::critical(this, "Send file", "An error has occurred while sending the file (" + QString::number(e, 10) + ").");
     ui->progressBar->setValue(0);
-    setBusy(false);
+    setBusy(false, "Error while sending data.");
     win7.setProgressState(win7.Error);
+    QMessageBox::critical(this, "Send file", "An error has occurred while sending data (" + QString::number(e, 10) + ").");
 }
 
 void MainWindow::on_listPeers_itemDoubleClicked(QListWidgetItem* item)
