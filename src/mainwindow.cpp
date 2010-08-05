@@ -167,7 +167,6 @@ void MainWindow::startFileTransfer(QStringList files)
     ui->progressBar->setValue(0);
     win7.setProgressState(win7.Normal);
     win7.setProgressValue(0, 100);
-    win7.setOverlayIcon("IDI_OVERLAY", "Transfering data...");
     mProtocol->sendFile(dest, files);
 }
 
@@ -200,7 +199,6 @@ void MainWindow::startTextTransfer(QString text)
     ui->progressBar->setValue(0);
     win7.setProgressState(win7.Normal);
     win7.setProgressValue(0, 100);
-    win7.setOverlayIcon("IDI_OVERLAY", "Transfering data...");
     mProtocol->sendText(dest, text);
 }
 
@@ -226,16 +224,14 @@ void MainWindow::sendFileComplete(QStringList *files)
 
     setBusy(false);
     win7.setProgressState(win7.NoProgress);
-    win7.setOverlayIcon("", "");
 }
 
 void MainWindow::receiveFileStart()
 {
-    setBusy(true, "Receiving files...");
+    setBusy(true, "Receiving...");
     ui->progressBar->setValue(0);
     win7.setProgressValue(0, 100);
     win7.setProgressState(win7.Normal);
-    win7.setOverlayIcon("IDI_OVERLAY", "Transfering data...");
 }
 
 void MainWindow::receiveFileComplete(QStringList *files)
@@ -253,7 +249,6 @@ void MainWindow::receiveFileComplete(QStringList *files)
         log("Multiple files and folders received.", "");
     }
     win7.setProgressState(win7.NoProgress);
-    win7.setOverlayIcon("", "");
     QApplication::alert(this, 3000);
     setBusy(false);
 }
@@ -265,7 +260,6 @@ void MainWindow::receiveFileCancelled()
     ui->statusBar->showMessage("Transfer cancelled.");
     log("Transfer cancelled.", "");
     win7.setProgressState(win7.Error);
-    win7.setOverlayIcon("", "");
 }
 
 void MainWindow::transferStatusUpdate(int p)
@@ -293,7 +287,6 @@ void MainWindow::sendFileError(int e)
     ui->progressBar->setValue(0);
     setBusy(false);
     win7.setProgressState(win7.Error);
-    win7.setOverlayIcon("", "");
 }
 
 void MainWindow::on_listPeers_itemDoubleClicked(QListWidgetItem* item)
@@ -393,7 +386,7 @@ QString MainWindow::getAllIPString()
 void MainWindow::receiveTextComplete(QString *text)
 {
     // Ripristino finestra principale
-    setBusy(false);
+    setBusy(false, "Text message received");
     log("Text message received.", "");
 
     // Apertura finestra con messaggio di testo
@@ -404,6 +397,7 @@ void MainWindow::receiveTextComplete(QString *text)
     td->show();
 
     // Alert applicazione
+    win7.setProgressState(win7.NoProgress);
     QApplication::alert(this, 3000);
 }
 
@@ -427,6 +421,10 @@ void MainWindow::setBusy(bool busy)
     ui->tabWidget->setEnabled(!busy);
     ui->buttonChangeDir->setEnabled(!busy);
     ui->buttonOpenDir->setEnabled(!busy);
+    if (busy)
+        win7.setOverlayIcon("IDI_OVERLAY", "Transfering data...");
+    else
+        win7.setOverlayIcon("", "");
 }
 
 void MainWindow::setBusy(bool busy, QString status)
