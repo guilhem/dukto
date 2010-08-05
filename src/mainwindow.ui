@@ -223,7 +223,7 @@
        <item row="0" column="4">
         <widget class="QToolButton" name="buttonChangeDir">
          <property name="text">
-          <string>Change...</string>
+          <string>Change</string>
          </property>
         </widget>
        </item>
