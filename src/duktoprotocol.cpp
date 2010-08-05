@@ -158,6 +158,8 @@ void DuktoProtocol::newIncomingConnection()
     mTotalReceivedData = 0;
     mElementSize = -1;
     mReceivedFiles = new QStringList();
+    mRootFolderName = "";
+    mRootFolderRenamed = "";
 
     // -- Lettura header generale --
     // Numero entità da ricevere
