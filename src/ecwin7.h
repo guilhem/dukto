@@ -102,7 +102,7 @@ DECLARE_INTERFACE_(ITaskbarList3,IUnknown)
 };
 typedef ITaskbarList3 *LPITaskbarList3;
 
-// Windows only data definitions - END
+// Windows only data d#endifefinitions - END
 #endif
 
 // ********************************************************************
@@ -115,8 +115,9 @@ public:
 	// Initialization methods
     EcWin7();
     void init(WId wid);
+#ifdef Q_WS_WIN
     bool winEvent(MSG * message, long * result);
-
+#endif
 	// Overlay icon handling
 	void setOverlayIcon(QString iconName, QString description);
 	

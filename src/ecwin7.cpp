@@ -28,7 +28,9 @@ DEFINE_GUID(IID_ITaskbarList3,0xea1afb91,0x9e28,0x4b86,0x90,0xE9,0x9e,0x9f,0x8a,
 // Constructor: variabiles initialization
 EcWin7::EcWin7()
 {
+#ifdef Q_WS_WIN
     mOverlayIcon = NULL;
+#endif
 }
 
 // Init taskbar communication
@@ -42,9 +44,9 @@ void EcWin7::init(WId wid)
 
 // Windows event handler callback function
 // (handles taskbar communication initial message)
+#ifdef Q_WS_WIN
 bool EcWin7::winEvent(MSG * message, long * result)
 {
-#ifdef Q_WS_WIN
     if (message->message == mTaskbarMessageId)
     {
         HRESULT hr = CoCreateInstance(CLSID_TaskbarList,
@@ -55,9 +57,9 @@ bool EcWin7::winEvent(MSG * message, long * result)
         *result = hr;
         return true;
     }
-#endif
     return false;
 }
+#endif
 
 // Set progress bar current value
 void EcWin7::setProgressValue(int value, int max)
