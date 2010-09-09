@@ -62,10 +62,12 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+#ifdef Q_WS_WIN
 bool MainWindow::winEvent(MSG * message, long * result)
 {
     return win7.winEvent(message, result);
 }
+#endif
 
 void MainWindow::setProtocolReference(DuktoProtocol *p)
 {

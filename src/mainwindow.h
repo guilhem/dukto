@@ -42,7 +42,9 @@ public:
     void dropEvent(QDropEvent *e);
 
 protected:
+#ifdef Q_WS_WIN
     bool winEvent(MSG * message, long * result);
+#endif
 
 public slots:
     void refreshPeerList();
