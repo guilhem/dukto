@@ -23,7 +23,7 @@
 #if defined(Q_WS_WIN)
 #define PLATFORM "Windows"
 #elif defined(Q_WS_MAC)
-#define PLATFORM "Apple Mac"
+#define PLATFORM "Macintosh"
 #elif defined(Q_WS_X11)
 #define PLATFORM "Linux"
 #endif
@@ -46,6 +46,10 @@ QString OsLib::retrieveSystemName()
     QString uname(getenv("USERNAME"));
     if (uname == "") uname = getenv("USER");
     if (uname == "") uname = "Unknown";
+#if defined(Q_WS_MAC)
+    systemName = uname + " at " + QHostInfo::localHostName().replace(".local", "") + " (" + PLATFORM + ")";
+#else
     systemName = uname + " at " + QHostInfo::localHostName() + " (" + PLATFORM + ")";
+#endif
     return systemName;
 }
