@@ -24,7 +24,7 @@
 #if defined(Q_WS_WIN)
 #include <windows.h>
 #elif defined(Q_WS_X11)
-#include <QProcess>
+#include <stdlib.h>
 #endif
 
 class OsLib
@@ -44,12 +44,9 @@ public:
     #if defined(Q_WS_WIN)
         ::ShellExecute(NULL, NULL, path.toStdWString().c_str(), NULL, NULL, SW_SHOWNORMAL);
     #elif defined(Q_WS_X11)
-        QProcess shell;
-        shell.start("xdg-open", QStringList() << ("\"" + path + "\""));
-        if (!shell.waitForStarted()) return;
-        if (!shell.waitForFinished()) return;
+        system(("xdg-open \"" + path + "\"").toStdString().c_str());
     #elif defined(Q_WS_MAC)
-        system(("open " + path).toStdString().c_str());
+        system(("open \"" + path + "\"").toStdString().c_str());
     #endif
     }
 
@@ -57,12 +54,9 @@ public:
     #if defined(Q_WS_WIN)
         ::ShellExecute(NULL, NULL, path.toStdWString().c_str(), NULL, NULL, SW_SHOWNORMAL);
     #elif defined(Q_WS_X11)
-        QProcess shell;
-        shell.start("xdg-open", QStringList() << ("\"" + path + "\""));
-        if (!shell.waitForStarted()) return;
-        if (!shell.waitForFinished()) return;
+        system(("xdg-open \"" + path + "\"").toStdString().c_str());
     #elif defined(Q_WS_MAC)
-        system(("open " + path).toStdString().c_str());
+        system(("open \"" + path + "\"").toStdString().c_str());
     #endif
     }
 
