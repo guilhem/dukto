@@ -131,7 +131,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Dukto R3 - _________ 2010</string>
+           <string>Dukto R3 - October 2010</string>
           </property>
          </widget>
         </item>
@@ -150,7 +150,7 @@
         <item>
          <widget class="QLabel" name="label_3">
           <property name="text">
-           <string>Official site: http://dukto.googlecode.com/</string>
+           <string>Official site: http://www.msec.it/dukto</string>
           </property>
           <property name="openExternalLinks">
            <bool>false</bool>
