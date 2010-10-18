@@ -9,6 +9,8 @@ QT       += core gui network
 TARGET = Dukto
 TEMPLATE = app
 
+CONFIG += static
+
 LIBS += libole32
 
 SOURCES += \ 
@@ -37,8 +39,12 @@ FORMS    += \
     textdialog.ui
 
 RESOURCES += \
-    resources.qrc
+    D:/Home/Progetti/Dukto/SVN/trunk/src/resources.qrc
 
 RC_FILE = dukto.rc
+
+win32 {
+QMAKE_LFLAGS += -static-libgcc
+}
 
 include(3rd/qtsingleapplication/qtsingleapplication.pri)
