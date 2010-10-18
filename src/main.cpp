@@ -23,18 +23,42 @@
 #include <QDir>
 #include <QFile>
 
+#ifdef Q_WS_MAC
+#include <CoreFoundation/CoreFoundation.h>
+#endif
+
 int main(int argc, char *argv[])
 {
-    if (argc == 2) {
-        QDir c(".");
-        if (c.exists(argv[1])) QDir::setCurrent(argv[1]);
-    }
-    
     QtSingleApplication a(argc, argv);
     if (a.isRunning()) {
         a.sendMessage("FOREGROUND");
         return 0;
     }
+
+    if (argc == 2) {
+        QDir c(".");
+        if (c.exists(argv[1])) QDir::setCurrent(argv[1]);
+    }
+#ifdef Q_WS_MAC
+    else {
+        CFURLRef docUrlRef = CFBundleCopyResourceURL(CFBundleGetMainBundle(), CFSTR("DownloadPath"), CFSTR("strings"), NULL);
+
+        if (docUrlRef != NULL) {
+            CFStringRef docPath = CFURLCopyFileSystemPath(docUrlRef, kCFURLPOSIXPathStyle);
+            QString pathPtr = CFStringGetCStringPtr(docPath, CFStringGetSystemEncoding());
+            QFile file(pathPtr);
+            file.open(QIODevice::ReadOnly | QIODevice::Text);
+            QTextStream stream(&file);
+            QString downloadPath = stream.readLine();
+
+            QDir c(".");
+            if (c.exists(downloadPath)) QDir::setCurrent(downloadPath);
+
+            CFRelease(docUrlRef);
+            CFRelease(docPath);
+        }
+    }
+#endif
 
     MainWindow w;
     DuktoProtocol p;
