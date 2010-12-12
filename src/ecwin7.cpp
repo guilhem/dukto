@@ -29,6 +29,7 @@ DEFINE_GUID(IID_ITaskbarList3,0xea1afb91,0x9e28,0x4b86,0x90,0xE9,0x9e,0x9f,0x8a,
 EcWin7::EcWin7()
 {
 #ifdef Q_WS_WIN
+    mTaskbar = NULL;
     mOverlayIcon = NULL;
 #endif
 }
@@ -65,6 +66,7 @@ bool EcWin7::winEvent(MSG * message, long * result)
 void EcWin7::setProgressValue(int value, int max)
 {
 #ifdef Q_WS_WIN
+    if (!mTaskbar) return;
     mTaskbar->SetProgressValue(mWindowId, value, max);
 #endif
 }
@@ -73,6 +75,7 @@ void EcWin7::setProgressValue(int value, int max)
 void EcWin7::setProgressState(ToolBarProgressState state)
 {
 #ifdef Q_WS_WIN
+    if (!mTaskbar) return;
     mTaskbar->SetProgressState(mWindowId, (TBPFLAG)state);
 #endif
 }
@@ -82,6 +85,7 @@ void EcWin7::setProgressState(ToolBarProgressState state)
 void EcWin7::setOverlayIcon(QString iconName, QString description)
 {
 #ifdef Q_WS_WIN
+    if (!mTaskbar) return;
     HICON oldIcon = NULL;
     if (mOverlayIcon != NULL) oldIcon = mOverlayIcon;
     if (iconName == "")
