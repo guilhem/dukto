@@ -101,9 +101,9 @@ private:
     QString mRootFolderName;           // Nome della cartella principale ricevuta
     QString mRootFolderRenamed;        // Nome della cartella principale da utilizzare
     QStringList *mReceivedFiles;        // Elenco degli elementi da trasmettere
-    QString mTextToReceive;             // Testo ricevuto in caso di invio testo
+    QByteArray mTextToReceive;             // Testo ricevuto in caso di invio testo
     bool mReceivingText;               // Ricezione di testo in corso
-    QString mPartialName;              // Nome prossimo file letto solo in parte
+    QByteArray mPartialName;              // Nome prossimo file letto solo in parte
 
 };
 

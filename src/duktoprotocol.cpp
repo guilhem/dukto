@@ -187,24 +187,16 @@ void DuktoProtocol::readNewData()
         if (mElementSize == -1)
         {
             // Lettura nome
-            QString name;
             char c;
-
-            // Check if part of the name has already been fetched
-            if (mPartialName.length() > 0) {
-                name = mPartialName;
-                mPartialName = "";
-            }
             while (1) {
                 bool ret = mCurrentSocket->getChar(&c);
-                if (!ret) {
-                    mPartialName = name;
-                    return;
-                }
+                if (!ret) return;
                 if (c == '\0') break;
-                name += c;
+                mPartialName.append(c);
             }
+            QString name = QString::fromUtf8(mPartialName);
             mReceivedFiles->append(name);
+            mPartialName.clear();
 
             // Lettura dimensioni
             mCurrentSocket->read((char*) &mElementSize, sizeof(qint64));
@@ -244,7 +236,7 @@ void DuktoProtocol::readNewData()
             else if (name == "___DUKTO___TEXT___")
             {
                 mReceivingText = true;
-                mTextToReceive = "";
+                mTextToReceive.clear();
                 mCurrentFile = NULL;
             }
 
@@ -284,7 +276,7 @@ void DuktoProtocol::readNewData()
         if (!mReceivingText)
             mCurrentFile->write(d);
         else
-            mTextToReceive += d;
+            mTextToReceive.append(d);
 
         // Verifico se ho completato l'elemento corrente
         if (mElementReceivedData == mElementSize)
@@ -327,7 +319,10 @@ void DuktoProtocol::closedConnection()
 
     // Ricezione testo conclusa
     else
-        receiveTextComplete(&mTextToReceive);
+    {
+        QString rec = QString::fromUtf8(mTextToReceive);
+        receiveTextComplete(&rec);
+    }
 
     // Chiusura socket
     if (mCurrentSocket)
@@ -589,7 +584,7 @@ QByteArray DuktoProtocol::nextElementHeader()
     // Nome elemento
     QString name = fullname;
     name.replace(mBasePath + "/", "");
-    header.append(name.toAscii() + '\0');
+    header.append(name.toUtf8() + '\0');
 
     // Dimensione elemento
     qint64 size = -1;
