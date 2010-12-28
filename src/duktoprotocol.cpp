@@ -151,7 +151,7 @@ void DuktoProtocol::newIncomingConnection()
 
     // Registrazione gestori eventi socket
     connect(mCurrentSocket, SIGNAL(readyRead()), this, SLOT(readNewData()), Qt::DirectConnection);
-    connect(mCurrentSocket, SIGNAL(disconnected()), this, SLOT(closedConnection()), Qt::DirectConnection);
+    connect(mCurrentSocket, SIGNAL(disconnected()), this, SLOT(closedConnection()), Qt::QueuedConnection);
 
     // Inizializzazione variabili
     mIsReceiving = true;
@@ -175,6 +175,10 @@ void DuktoProtocol::newIncomingConnection()
 // Processo di lettura principale
 void DuktoProtocol::readNewData()
 {
+    // Temporanea disconnessione per evitare di
+    // ricevere altri segnali mentre ne sto già gestendo uno
+    disconnect(mCurrentSocket, SIGNAL(readyRead()), this, SLOT(readNewData()));
+
     // Fino a che ci sono dati da leggere
     while (mCurrentSocket->bytesAvailable() > 0)
     {
@@ -289,13 +293,14 @@ void DuktoProtocol::readNewData()
             mElementSize = -1;
             if (!mReceivingText)
             {
-                mCurrentFile->close();
-                delete mCurrentFile;
+                mCurrentFile->deleteLater();
                 mCurrentFile = NULL;
             }
         }
     }
 
+    // Riabilitazione segnale
+    connect(mCurrentSocket, SIGNAL(readyRead()), this, SLOT(readNewData()), Qt::DirectConnection);
 }
 
 // Chiusura della connessione TCP in ricezione
@@ -599,7 +604,6 @@ QByteArray DuktoProtocol::nextElementHeader()
     }
 
     return header;
-
 }
 
 // Calcola l'occupazione totale di tutti i file da trasferire
@@ -634,7 +638,10 @@ void DuktoProtocol::sendToAllBroadcast(QByteArray *packet)
         // Invio pacchetto per ogni IP di broadcast
         for (int j = 0; j < addrs.size(); j++)
             if ((addrs[j].ip().protocol() == QAbstractSocket::IPv4Protocol) && (addrs[j].broadcast().toString() != ""))
+            {
                 mSocket->writeDatagram(packet->data(), packet->length(), addrs[j].broadcast(), UDP_PORT);
+                mSocket->flush();
+            }
 
     }
 
