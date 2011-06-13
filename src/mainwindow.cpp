@@ -29,6 +29,7 @@
 #include <QDir>
 #include <QtGui/QMessageBox>
 #include <QNetworkInterface>
+#include <QDesktopServices>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindowClass), mProtocol(NULL)
@@ -51,7 +52,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(action, SIGNAL(triggered()), this, SLOT(contextMenu_sendFiles()));
     ui->listPeers->addAction(action);
     action = new QAction("Send text...", this);
-    action->setPriority(QAction::HighPriority);
+    // action->setPriority(QAction::HighPriority);
     connect(action, SIGNAL(triggered()), this, SLOT(contextMenu_sendText()));
     ui->listPeers->addAction(action);
     ui->listPeers->setContextMenuPolicy(Qt::PreventContextMenu);
@@ -206,12 +207,12 @@ void MainWindow::startTextTransfer(QString text)
 
 void MainWindow::sendFileComplete(QStringList *files)
 {
-    if (files->count() == 1)
+    if ((files->count() == 1) && (!QFileInfo(files->at(0)).isDir()))
     {
         QFileInfo fi(files->at(0));
         if (fi.fileName() == "___DUKTO___TEXT___") {
-            ui->statusBar->showMessage("Text sent.");
-            log("Text sent.", "");
+            ui->statusBar->showMessage("Text message sent.");
+            log("Text message sent.", "");
         }
         else {
             ui->statusBar->showMessage("File '" + fi.fileName() + "' sent.");
@@ -238,7 +239,7 @@ void MainWindow::receiveFileStart()
 
 void MainWindow::receiveFileComplete(QStringList *files)
 {
-    if (files->count() == 1)
+    if ((files->count() == 1) && (!QFileInfo(files->at(0)).isDir()))
     {
         ui->statusBar->showMessage("File '" + files->at(0) +  "' received.");
         QString path = QDir::currentPath() + "/" + files->at(0);
@@ -309,7 +310,8 @@ void MainWindow::on_listLog_itemDoubleClicked(QListWidgetItem* item)
     if (i->getFilename() != "")
     {
         //QString n = QDir::currentPath() + "/" + i->getFilename();
-        OsLib::openFile(i->getFilename());
+        //OsLib::openFile(i->getFilename());
+        QDesktopServices::openUrl(QUrl("file:///" + i->getFilename(), QUrl::TolerantMode));
     }
 }
 
@@ -407,7 +409,8 @@ void MainWindow::on_buttonOpenDir_clicked()
 {
     // Apertura finestra del sistema operativo
     // relativa alla cartella corrente
-    OsLib::openFolder(OsLib::adaptPath(QDir::currentPath()));
+    // OsLib::openFolder(OsLib::adaptPath(QDir::currentPath()));
+    QDesktopServices::openUrl(QUrl("file:///" + OsLib::adaptPath(QDir::currentPath()), QUrl::TolerantMode));
 }
 
 void MainWindow::on_listPeers_itemSelectionChanged()
@@ -433,4 +436,11 @@ void MainWindow::setBusy(bool busy, QString status)
 {
     setBusy(busy);
     ui->statusBar->showMessage(status);
+}
+
+void MainWindow::on_buttonCheckUpdates_clicked()
+{
+    QString locale = QLocale::system().name();
+    QString platform = PLATFORM;
+    QDesktopServices::openUrl(QUrl("http://www.msec.it/dukto/version.php?p=" + platform.toLower() + "&v=R4&r=0&l=" + locale, QUrl::TolerantMode));
 }

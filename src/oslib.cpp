@@ -20,14 +20,6 @@
 
 #include <QHostInfo>
 
-#if defined(Q_WS_WIN)
-#define PLATFORM "Windows"
-#elif defined(Q_WS_MAC)
-#define PLATFORM "Macintosh"
-#elif defined(Q_WS_X11)
-#define PLATFORM "Linux"
-#endif
-
 QString OsLib::removeUrlPrefix(QString url)
 {
 #if defined(Q_WS_WIN)

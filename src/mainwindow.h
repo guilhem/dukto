@@ -71,6 +71,7 @@ private:
     EcWin7 win7;
 
 private slots:
+    void on_buttonCheckUpdates_clicked();
     void on_listPeers_itemSelectionChanged();
     void on_buttonOpenDir_clicked();
     void on_buttonSendTextToIp_clicked();
