@@ -24,8 +24,6 @@
         <file>qml/dukto/DuktoInner.qml</file>
         <file>qml/dukto/DuktoMetroIcon.png</file>
         <file>qml/dukto/DuktoOverlay.qml</file>
-        <file>qml/dukto/EsempioDati.qml</file>
-        <file>qml/dukto/EsempioRecent.qml</file>
         <file>qml/dukto/IpLogo.png</file>
         <file>qml/dukto/IpPage.qml</file>
         <file>qml/dukto/LinuxLogo.png</file>
